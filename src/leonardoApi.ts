@@ -54,10 +54,7 @@ export class LeonardoAPI {
     } catch (error) {
       return {
         success: false,
-        generationResult: {
-          status: 'ERROR',
-          error: error.message,
-        },
+        error,
       }
     }
   }
