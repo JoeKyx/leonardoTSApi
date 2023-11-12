@@ -1,5 +1,6 @@
 import { GenerateImageQueryParams } from './queryParamTypes'
 import { GenerateImageResponse } from './responseTypes'
+import { getErrorMessage } from './utils'
 import {
   ValidationError,
   validateGenerateImageQueryParams,
@@ -17,6 +18,16 @@ type GenerationResultResponse = {
   generations_by_pk: GenerateImageResponse
 }
 
+type GenerateImagesResponse =
+  | {
+      success: true
+      generationResult: GenerateImageResponse
+    }
+  | {
+      success: false
+      error: string
+    }
+
 export class LeonardoAPI {
   private apiKey: string
   private baseUrl: string = 'https://cloud.leonardo.ai/api/rest/v1'
@@ -27,7 +38,9 @@ export class LeonardoAPI {
     this.generationTimeout = generationTimeout
   }
 
-  public async generateImages(params: GenerateImageQueryParams) {
+  public async generateImages(
+    params: GenerateImageQueryParams
+  ): Promise<GenerateImagesResponse> {
     const validation = validateGenerateImageQueryParams(params)
     if (!validation.valid) {
       throw new ValidationError(validation.errors.join('\n'))
@@ -50,11 +63,21 @@ export class LeonardoAPI {
       console.log(generationJobResponse)
       const generationId = generationJobResponse.sdGenerationJob.generationId
       const genResult = await this.waitForGenerationResult(generationId)
-      return genResult
+      if (genResult.success) {
+        return {
+          success: true,
+          generationResult: genResult.generationResult,
+        }
+      } else {
+        return {
+          success: false,
+          error: 'Generation timeout',
+        }
+      }
     } catch (error) {
       return {
         success: false,
-        error,
+        error: getErrorMessage(error),
       }
     }
   }
