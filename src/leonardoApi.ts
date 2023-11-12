@@ -49,9 +49,16 @@ export class LeonardoAPI {
     try {
       console.log(generationJobResponse)
       const generationId = generationJobResponse.sdGenerationJob.generationId
-      await this.waitForGenerationResult(generationId)
+      const genResult = await this.waitForGenerationResult(generationId)
+      return genResult
     } catch (error) {
-      console.log(error)
+      return {
+        success: false,
+        generationResult: {
+          status: 'ERROR',
+          error: error.message,
+        },
+      }
     }
   }
   private async waitForGenerationResult(generationId: string) {
