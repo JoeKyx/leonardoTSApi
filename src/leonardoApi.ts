@@ -210,10 +210,7 @@ export class LeonardoAPI {
     Object.entries(parsedFields).forEach(([key, value]) => {
       form.append(key, value as string)
     })
-    form.append(
-      'file',
-      fs.createReadStream(path.resolve(__dirname, '../tmp/r4k4tiugy4.jpg'))
-    )
+    form.append('file', fs.createReadStream(path.resolve(__dirname, filePath)))
 
     try {
       const uploadUrl = initUploadResponse.uploadInitImage.url
