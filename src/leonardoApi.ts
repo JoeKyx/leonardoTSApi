@@ -34,7 +34,7 @@ import FormData from 'form-data'
 
 import axios from 'axios'
 
-export class LeonardoAPI {
+export default class LeonardoAPI {
   private apiKey: string
   private baseUrl: string = 'https://cloud.leonardo.ai/api/rest/v1'
   private baseCDNUrl: string = 'https://cdn.leonardo.ai/'
