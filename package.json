@@ -9,8 +9,7 @@
     "start": "nodemon",
     "build:ts": "tsc",
     "build:babel": "babel src --extensions \".ts,.tsx\"",
-    "build": "npm run build:ts && npm run build:babel",
-    "postinstall": "npm run build"
+    "build": "npm run build:ts && npm run build:babel"
   },
   "author": "Joe Hoffmann",
   "license": "ISC",
