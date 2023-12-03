@@ -125,6 +125,7 @@ export const uploadInitImageFromUrlResponseSchema = z.union([
   z.object({
     success: z.literal(true),
     uploadInitImageId: z.string(),
+    url: z.string(),
   }),
   z.object({
     success: z.literal(false),

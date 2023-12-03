@@ -91,10 +91,7 @@ export const SchedulerSchema = z.union([
 
 export type Scheduler = z.infer<typeof SchedulerSchema>
 
-export const StableDiffusionVersionSchema = z.union([
-  z.literal('v1_5'),
-  z.literal('v2'),
-])
+export const StableDiffusionVersionSchema = z.string()
 
 export type StableDiffusionVersion = z.infer<
   typeof StableDiffusionVersionSchema
@@ -117,7 +114,7 @@ export const GenerateImageQueryParamsSchema = z.object({
   init_generation_image_id: z.string().optional(),
   init_image_id: z.string().optional(),
   init_strength: z.number().optional(),
-  modelid: z.string().optional(),
+  modelId: z.string().optional(),
   negative_prompt: z.string().optional(),
   nsfw: z.boolean().optional(),
   num_images: z.number().optional(),

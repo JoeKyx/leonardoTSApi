@@ -17,16 +17,15 @@ export const GeneratedImageSchema = z.object({
   nsfw: z.boolean(),
   id: z.string(),
   likeCount: z.number(),
-  generatedImageVariationGenerics: z.array(z.string()),
+  generated_image_variation_generics: z.array(z.string()),
 })
 
 export const GenerateImageResponseSchema = z.object({
-  apiCreditCost: z.number(),
   id: z.string(),
-  generated_image: GeneratedImageSchema,
-  modelId: z.string(),
+  generated_images: z.array(GeneratedImageSchema),
+  modelId: z.string().nullable(),
   prompt: z.string(),
-  negativePrompt: z.string(),
+  negativePrompt: z.string().nullable(),
   imageHeight: z.number(),
   imageWidth: z.number(),
   inferenceSteps: z.number(),
@@ -35,13 +34,15 @@ export const GenerateImageResponseSchema = z.object({
   scheduler: SchedulerSchema,
   sdVersion: StableDiffusionVersionSchema,
   status: z.string(),
-  presetStyle: z.union([
-    PresetStylePhotoRealSchema,
-    PresetStyleAlchemySchema,
-    PresetStyleDefaultSchema,
-  ]),
-  initStrength: z.number(),
-  guidanceScale: z.number(),
+  presetStyle: z
+    .union([
+      PresetStylePhotoRealSchema,
+      PresetStyleAlchemySchema,
+      PresetStyleDefaultSchema,
+    ])
+    .nullable(),
+  initStrength: z.number().nullable(),
+  guidanceScale: z.number().nullable(),
   createdAt: z.string(),
   promptMagic: z.boolean(),
   promptMagicVersion: z.number().nullable(),

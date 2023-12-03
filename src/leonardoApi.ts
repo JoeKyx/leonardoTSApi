@@ -38,6 +38,7 @@ import axios from 'axios'
 export class LeonardoAPI {
   private apiKey: string
   private baseUrl: string = 'https://cloud.leonardo.ai/api/rest/v1'
+  private baseCDNUrl: string = 'https://cdn.leonardo.ai/'
   private generationTimeout: number
 
   constructor(apiKey: string, generationTimeout = 120000) {
@@ -160,6 +161,7 @@ export class LeonardoAPI {
       return {
         success: true,
         uploadInitImageId: initUploadResponse.uploadInitImage.id,
+        url: this.baseCDNUrl + initUploadResponse.uploadInitImage.key,
       }
     } catch (error) {
       return {
@@ -196,6 +198,8 @@ export class LeonardoAPI {
     fileExtension: ImageExtension,
     initUploadResponse: ImageUploadInitResponse
   ) {
+    // TODO: remove temp saving of file
+
     const filePath = await saveFileTemporarily(url, fileExtension)
     // const file = fs.createReadStream(filePath)
 
@@ -227,6 +231,8 @@ export class LeonardoAPI {
     } catch (error) {
       console.error('Error during file upload:', error)
       throw error
+    } finally {
+      fs.unlinkSync(filePath)
     }
   }
 
@@ -291,7 +297,7 @@ export class LeonardoAPI {
         (await generationResultResponse.json()) as GenerationResultResponse
 
       console.log('Generation result:')
-      console.log(generationResult)
+      console.log(generationResult.generations_by_pk?.status)
       if (generationResult.generations_by_pk?.status === 'PENDING') {
         // Wait for 1 second before next check
         await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -308,8 +314,11 @@ export class LeonardoAPI {
     } while (generationResult.generations_by_pk?.status === 'PENDING')
 
     try {
+      console.log(generationResult.generations_by_pk)
       GenerateImageResponseSchema.parse(generationResult.generations_by_pk)
     } catch (error) {
+      console.log('ERROR')
+      console.log(getErrorMessage(error))
       return {
         success: false,
         error: getErrorMessage(error),

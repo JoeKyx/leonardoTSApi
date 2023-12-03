@@ -11,6 +11,7 @@ import { getGlobals } from 'common-es'
 const { __dirname } = getGlobals(import.meta.url)
 
 export const getErrorMessage = (error: unknown) => {
+  console.log(error)
   let message: string
   if (error instanceof ZodError) {
     message = error.issues.map((issue) => issue.message).join('\n')
