@@ -32,27 +32,27 @@ export const validateGenerateImageQueryParams = (
     validationResult.errors.push(' PhotoReal cannot be used without Alchemy')
   }
 
-  if (params.presetStyle) {
-    if (params.alchemy && !isOneOf(params.presetStyle, PresetStyleAlchemy)) {
-      validationResult.valid = false
-      validationResult.errors.push(
-        'PresetStyle must be one of PresetStyleAlchemy if alchemy is true'
-      )
-    } else if (
-      params.photoReal &&
-      !isOneOf(params.presetStyle, PresetStylePhotoReal)
-    ) {
-      validationResult.valid = false
-      validationResult.errors.push(
-        'PresetStyle must be one of PresetStylePhotoReal if photoReal is true'
-      )
-    } else if (!isOneOf(params.presetStyle, PresetStyleDefault)) {
-      validationResult.valid = false
-      validationResult.errors.push(
-        'PresetStyle must be of PresetStyleDefault if neither alchemy nor photoReal is true'
-      )
-    }
-  }
+  // if (params.presetStyle) {
+  //   if (params.alchemy && !isOneOf(params.presetStyle, PresetStyleAlchemy)) {
+  //     validationResult.valid = false
+  //     validationResult.errors.push(
+  //       'PresetStyle must be one of PresetStyleAlchemy if alchemy is true'
+  //     )
+  //   } else if (
+  //     params.photoReal &&
+  //     !isOneOf(params.presetStyle, PresetStylePhotoReal)
+  //   ) {
+  //     validationResult.valid = false
+  //     validationResult.errors.push(
+  //       'PresetStyle must be one of PresetStylePhotoReal if photoReal is true'
+  //     )
+  //   } else if (!isOneOf(params.presetStyle, PresetStyleDefault)) {
+  //     validationResult.valid = false
+  //     validationResult.errors.push(
+  //       'PresetStyle must be of PresetStyleDefault if neither alchemy nor photoReal is true'
+  //     )
+  //   }
+  // }
 
   if (!params.alchemy) {
     if (params.alchemyStrength) {
