@@ -1,6 +1,5 @@
 import { z } from 'zod'
-import { GenerateImageResponse } from './responseTypes'
-
+import { GenerateImageResponse } from './responseTypes.js'
 export const InvalidValidationResultSchema = z.object({
   valid: z.literal(false),
   errors: z.array(z.string()),

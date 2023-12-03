@@ -32,7 +32,6 @@ import {
 import fetch from 'node-fetch'
 import FormData from 'form-data'
 
-import { Readable } from 'stream'
 import axios from 'axios'
 
 export class LeonardoAPI {
