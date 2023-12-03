@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PresetStyleAlchemySchema, PresetStyleDefaultSchema, PresetStylePhotoRealSchema, SchedulerSchema, StableDiffusionVersionSchema, } from './queryParamTypes';
+import { PresetStyleAlchemySchema, PresetStyleDefaultSchema, PresetStylePhotoRealSchema, SchedulerSchema, StableDiffusionVersionSchema, } from './queryParamTypes.js';
 export const GeneratedImageSchema = z.object({
     url: z.string(),
     nsfw: z.boolean(),

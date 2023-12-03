@@ -10,7 +10,7 @@ import { getErrorMessage, saveFileTemporarily, } from './utils.js';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 import axios from 'axios';
-export class LeonardoAPI {
+export default class LeonardoAPI {
     apiKey;
     baseUrl = 'https://cloud.leonardo.ai/api/rest/v1';
     baseCDNUrl = 'https://cdn.leonardo.ai/';

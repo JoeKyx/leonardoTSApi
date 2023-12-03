@@ -1,14 +1,9 @@
 import { z } from 'zod'
 import {
-  PresetStyleAlchemy,
   PresetStyleAlchemySchema,
-  PresetStyleDefault,
   PresetStyleDefaultSchema,
-  PresetStylePhotoReal,
   PresetStylePhotoRealSchema,
-  Scheduler,
   SchedulerSchema,
-  StableDiffusionVersion,
   StableDiffusionVersionSchema,
 } from './queryParamTypes.js'
 
