@@ -3,7 +3,7 @@ import {
   PresetStyleAlchemy,
   PresetStyleDefault,
   PresetStylePhotoReal,
-} from './queryParamTypes.js'
+} from './queryParamTypes'
 
 function isOneOf<T extends Record<string, unknown>>(
   value: any,

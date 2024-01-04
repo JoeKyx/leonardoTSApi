@@ -1,13 +1,18 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+    "module": "ESNext",
+    "target": "ESNext",
+    "declaration": true,
     "strict": true,
-    "lib": [
-      "ES2022"
-    ],
-    "module": "ES2022",
     "moduleResolution": "node",
-    "target": "ES2022",
-    "skipLibCheck": true,
-  }
+    "allowSyntheticDefaultImports": true,
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

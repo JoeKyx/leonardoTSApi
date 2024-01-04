@@ -3,11 +3,11 @@
 import {
   GenerateImageQueryParams,
   GenerateImageQueryParamsSchema,
-} from './queryParamTypes.js'
+} from './queryParamTypes'
 import {
   GenerateImageResponse,
   GenerateImageResponseSchema,
-} from './responseTypes.js'
+} from './responseTypes'
 import {
   GenerateImagesResponse,
   GenerationJobResponse,
@@ -19,16 +19,12 @@ import {
   UpscaleImageResponse,
   UpscaleJobResponse,
   VariationResultResponse,
-} from './types.js'
+} from './types'
 import fs from 'fs'
 import path from 'path'
 import { getGlobals } from 'common-es'
 const { __dirname } = getGlobals(import.meta.url)
-import {
-  bufferToStream,
-  getErrorMessage,
-  saveFileTemporarily,
-} from './utils.js'
+import { bufferToStream, getErrorMessage, saveFileTemporarily } from './utils'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
 

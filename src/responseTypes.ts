@@ -5,7 +5,7 @@ import {
   PresetStylePhotoRealSchema,
   SchedulerSchema,
   StableDiffusionVersionSchema,
-} from './queryParamTypes.js'
+} from './queryParamTypes'
 
 export const GeneratedImageSchema = z.object({
   url: z.string(),
