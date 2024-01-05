@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "description": "",
-  "main": "src/main.ts",
+  "main": "dist/leonardoApi.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon",
