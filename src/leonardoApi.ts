@@ -325,3 +325,8 @@ export default class LeonardoAPI {
     }
   }
 }
+
+export * from './types'
+export * from './queryParamTypes'
+export * from './responseTypes'
+export * from './validators'

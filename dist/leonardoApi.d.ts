@@ -14,3 +14,7 @@ export default class LeonardoAPI {
     private waitForVariationResult;
     private waitForGenerationResult;
 }
+export * from './types';
+export * from './queryParamTypes';
+export * from './responseTypes';
+export * from './validators';

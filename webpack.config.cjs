@@ -17,7 +17,7 @@ module.exports = {
     extensions: ['.ts', '.js'],
   },
   output: {
-    filename: 'kyxbot-database.js', // Output file name
+    filename: 'leonardoApi.js', // Output file name
     path: path.resolve(__dirname, 'dist'),
     library: 'kyxbotDatabase', // Expose your library
     libraryTarget: 'umd',
