@@ -6,7 +6,7 @@ import path from 'path'
 
 import { promisify } from 'util'
 import { pipeline } from 'stream'
-import { ImageExtension } from './types'
+import { ImageExtension } from './types.js'
 import { getGlobals } from 'common-es'
 const { __dirname } = getGlobals(import.meta.url)
 
