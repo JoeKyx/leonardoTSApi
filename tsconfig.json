@@ -4,6 +4,7 @@
     "module": "ESNext",
     "target": "ESNext",
     "declaration": true,
+    "declarationMap": true,
     "strict": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,

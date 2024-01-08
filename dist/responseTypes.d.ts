@@ -6,15 +6,15 @@ export declare const GeneratedImageSchema: z.ZodObject<{
     likeCount: z.ZodNumber;
     generated_image_variation_generics: z.ZodArray<z.ZodString, "many">;
 }, "strip", z.ZodTypeAny, {
-    nsfw: boolean;
     id: string;
     url: string;
+    nsfw: boolean;
     likeCount: number;
     generated_image_variation_generics: string[];
 }, {
-    nsfw: boolean;
     id: string;
     url: string;
+    nsfw: boolean;
     likeCount: number;
     generated_image_variation_generics: string[];
 }>;
@@ -27,15 +27,15 @@ export declare const GenerateImageResponseSchema: z.ZodObject<{
         likeCount: z.ZodNumber;
         generated_image_variation_generics: z.ZodArray<z.ZodString, "many">;
     }, "strip", z.ZodTypeAny, {
-        nsfw: boolean;
         id: string;
         url: string;
+        nsfw: boolean;
         likeCount: number;
         generated_image_variation_generics: string[];
     }, {
-        nsfw: boolean;
         id: string;
         url: string;
+        nsfw: boolean;
         likeCount: number;
         generated_image_variation_generics: string[];
     }>, "many">;
@@ -61,24 +61,24 @@ export declare const GenerateImageResponseSchema: z.ZodObject<{
     photoRealStrength: z.ZodNullable<z.ZodNumber>;
     generation_elements: z.ZodArray<z.ZodString, "many">;
 }, "strip", z.ZodTypeAny, {
+    id: string;
+    public: boolean;
+    prompt: string;
     status: string;
     guidanceScale: number | null;
     modelId: string | null;
-    prompt: string;
     promptMagic: boolean;
     promptMagicStrength: number | null;
     promptMagicVersion: number | null;
-    public: boolean;
-    scheduler: "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM" | "LEONARDO";
+    scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM";
     seed: number;
     photoReal: boolean;
     photoRealStrength: number | null;
-    presetStyle: "LEONARDO" | "CINEMATIC" | "CREATIVE" | "VIBRANT" | "NONE" | "ANIME" | "DYNAMIC" | "ENVIRONMENT" | "GENERAL" | "ILLUSTRATION" | "PHOTOGRAPHY" | "RAYTRACED" | "RENDER_3D" | "SKETCH_BW" | "SKETCH_COLOR" | null;
-    id: string;
+    presetStyle: "CINEMATIC" | "CREATIVE" | "VIBRANT" | "NONE" | "ANIME" | "DYNAMIC" | "ENVIRONMENT" | "GENERAL" | "ILLUSTRATION" | "PHOTOGRAPHY" | "RAYTRACED" | "RENDER_3D" | "SKETCH_BW" | "SKETCH_COLOR" | "LEONARDO" | null;
     generated_images: {
-        nsfw: boolean;
         id: string;
         url: string;
+        nsfw: boolean;
         likeCount: number;
         generated_image_variation_generics: string[];
     }[];
@@ -91,24 +91,24 @@ export declare const GenerateImageResponseSchema: z.ZodObject<{
     createdAt: string;
     generation_elements: string[];
 }, {
+    id: string;
+    public: boolean;
+    prompt: string;
     status: string;
     guidanceScale: number | null;
     modelId: string | null;
-    prompt: string;
     promptMagic: boolean;
     promptMagicStrength: number | null;
     promptMagicVersion: number | null;
-    public: boolean;
-    scheduler: "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM" | "LEONARDO";
+    scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM";
     seed: number;
     photoReal: boolean;
     photoRealStrength: number | null;
-    presetStyle: "LEONARDO" | "CINEMATIC" | "CREATIVE" | "VIBRANT" | "NONE" | "ANIME" | "DYNAMIC" | "ENVIRONMENT" | "GENERAL" | "ILLUSTRATION" | "PHOTOGRAPHY" | "RAYTRACED" | "RENDER_3D" | "SKETCH_BW" | "SKETCH_COLOR" | null;
-    id: string;
+    presetStyle: "CINEMATIC" | "CREATIVE" | "VIBRANT" | "NONE" | "ANIME" | "DYNAMIC" | "ENVIRONMENT" | "GENERAL" | "ILLUSTRATION" | "PHOTOGRAPHY" | "RAYTRACED" | "RENDER_3D" | "SKETCH_BW" | "SKETCH_COLOR" | "LEONARDO" | null;
     generated_images: {
-        nsfw: boolean;
         id: string;
         url: string;
+        nsfw: boolean;
         likeCount: number;
         generated_image_variation_generics: string[];
     }[];
@@ -123,3 +123,4 @@ export declare const GenerateImageResponseSchema: z.ZodObject<{
 }>;
 export type GenerateImageResponse = z.infer<typeof GenerateImageResponseSchema>;
 export type GeneratedImage = z.infer<typeof GeneratedImageSchema>;
+//# sourceMappingURL=responseTypes.d.ts.map

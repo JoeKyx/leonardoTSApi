@@ -19,7 +19,7 @@ module.exports = {
   output: {
     filename: 'leonardoApi.js', // Output file name
     path: path.resolve(__dirname, 'dist'),
-    library: 'kyxbotDatabase', // Expose your library
+    library: 'leonardo-ts', // Expose your library
     libraryTarget: 'umd',
     globalObject: 'this',
   },

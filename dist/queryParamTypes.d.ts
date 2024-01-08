@@ -124,7 +124,7 @@ export declare const GenerateImageQueryParamsSchema: z.ZodObject<{
     promptMagicStrength?: number | undefined;
     promptMagicVersion?: 2 | 1 | undefined;
     public?: boolean | undefined;
-    scheduler?: "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM" | "LEONARDO" | undefined;
+    scheduler?: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM" | undefined;
     sd_version?: string | undefined;
     seed?: number | undefined;
     tiling?: boolean | undefined;
@@ -135,7 +135,7 @@ export declare const GenerateImageQueryParamsSchema: z.ZodObject<{
     width?: number | undefined;
     photoReal?: boolean | undefined;
     photoRealStrength?: number | undefined;
-    presetStyle?: "LEONARDO" | "CINEMATIC" | "CREATIVE" | "VIBRANT" | "NONE" | "ANIME" | "DYNAMIC" | "ENVIRONMENT" | "GENERAL" | "ILLUSTRATION" | "PHOTOGRAPHY" | "RAYTRACED" | "RENDER_3D" | "SKETCH_BW" | "SKETCH_COLOR" | undefined;
+    presetStyle?: "CINEMATIC" | "CREATIVE" | "VIBRANT" | "NONE" | "ANIME" | "DYNAMIC" | "ENVIRONMENT" | "GENERAL" | "ILLUSTRATION" | "PHOTOGRAPHY" | "RAYTRACED" | "RENDER_3D" | "SKETCH_BW" | "SKETCH_COLOR" | "LEONARDO" | undefined;
     alchemy?: boolean | undefined;
     alchemyStrength?: number | undefined;
     contrastRatio?: number | undefined;
@@ -166,7 +166,7 @@ export declare const GenerateImageQueryParamsSchema: z.ZodObject<{
     promptMagicStrength?: number | undefined;
     promptMagicVersion?: 2 | 1 | undefined;
     public?: boolean | undefined;
-    scheduler?: "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM" | "LEONARDO" | undefined;
+    scheduler?: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM" | undefined;
     sd_version?: string | undefined;
     seed?: number | undefined;
     tiling?: boolean | undefined;
@@ -177,10 +177,11 @@ export declare const GenerateImageQueryParamsSchema: z.ZodObject<{
     width?: number | undefined;
     photoReal?: boolean | undefined;
     photoRealStrength?: number | undefined;
-    presetStyle?: "LEONARDO" | "CINEMATIC" | "CREATIVE" | "VIBRANT" | "NONE" | "ANIME" | "DYNAMIC" | "ENVIRONMENT" | "GENERAL" | "ILLUSTRATION" | "PHOTOGRAPHY" | "RAYTRACED" | "RENDER_3D" | "SKETCH_BW" | "SKETCH_COLOR" | undefined;
+    presetStyle?: "CINEMATIC" | "CREATIVE" | "VIBRANT" | "NONE" | "ANIME" | "DYNAMIC" | "ENVIRONMENT" | "GENERAL" | "ILLUSTRATION" | "PHOTOGRAPHY" | "RAYTRACED" | "RENDER_3D" | "SKETCH_BW" | "SKETCH_COLOR" | "LEONARDO" | undefined;
     alchemy?: boolean | undefined;
     alchemyStrength?: number | undefined;
     contrastRatio?: number | undefined;
     expandedDomain?: boolean | undefined;
 }>;
 export type GenerateImageQueryParams = z.infer<typeof GenerateImageQueryParamsSchema>;
+//# sourceMappingURL=queryParamTypes.d.ts.map

@@ -3,11 +3,11 @@
   "type": "module",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/leonardoApi.js",
+  "main": "./dist/leonardoApi.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon",
-    "build": "webpack"
+    "build": "tsc"
   },
   "author": "Joe Hoffmann",
   "license": "ISC",

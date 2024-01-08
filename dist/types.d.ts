@@ -40,11 +40,11 @@ export declare const ApiErrorSchema: z.ZodObject<{
     error: z.ZodString;
     code: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    error: string;
     code: string;
+    error: string;
 }, {
-    error: string;
     code: string;
+    error: string;
 }>;
 export type APIError = z.infer<typeof ApiErrorSchema>;
 export declare const ImageUploadInitResponseSchema: z.ZodObject<{
@@ -55,32 +55,32 @@ export declare const ImageUploadInitResponseSchema: z.ZodObject<{
         url: z.ZodString;
         __typename: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        key: string;
         id: string;
         url: string;
         fields: string;
-        key: string;
         __typename: string;
     }, {
+        key: string;
         id: string;
         url: string;
         fields: string;
-        key: string;
         __typename: string;
     }>;
 }, "strip", z.ZodTypeAny, {
     uploadInitImage: {
+        key: string;
         id: string;
         url: string;
         fields: string;
-        key: string;
         __typename: string;
     };
 }, {
     uploadInitImage: {
+        key: string;
         id: string;
         url: string;
         fields: string;
-        key: string;
         __typename: string;
     };
 }>;
@@ -120,11 +120,11 @@ export declare const GenerationJobResponseSchema: z.ZodUnion<[z.ZodObject<{
     error: z.ZodString;
     code: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    error: string;
     code: string;
+    error: string;
 }, {
-    error: string;
     code: string;
+    error: string;
 }>]>;
 export type GenerationJobResponse = z.infer<typeof GenerationJobResponseSchema>;
 export declare const UpscaleJobResponseSchema: z.ZodUnion<[z.ZodObject<{
@@ -152,11 +152,11 @@ export declare const UpscaleJobResponseSchema: z.ZodUnion<[z.ZodObject<{
     error: z.ZodString;
     code: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    error: string;
     code: string;
+    error: string;
 }, {
-    error: string;
     code: string;
+    error: string;
 }>]>;
 export type UpscaleJobResponse = z.infer<typeof UpscaleJobResponseSchema>;
 export declare const VariationResultResponseSchema: z.ZodObject<{
@@ -167,31 +167,31 @@ export declare const VariationResultResponseSchema: z.ZodObject<{
         createdAt: z.ZodString;
         transformType: z.ZodUnion<[z.ZodLiteral<"UPSCALE">, z.ZodLiteral<"UNZOOM">]>;
     }, "strip", z.ZodTypeAny, {
-        status: string;
         id: string;
         url: string;
+        status: string;
         createdAt: string;
         transformType: "UPSCALE" | "UNZOOM";
     }, {
-        status: string;
         id: string;
         url: string;
+        status: string;
         createdAt: string;
         transformType: "UPSCALE" | "UNZOOM";
     }>, "many">;
 }, "strip", z.ZodTypeAny, {
     generated_image_variation_generic: {
-        status: string;
         id: string;
         url: string;
+        status: string;
         createdAt: string;
         transformType: "UPSCALE" | "UNZOOM";
     }[];
 }, {
     generated_image_variation_generic: {
-        status: string;
         id: string;
         url: string;
+        status: string;
         createdAt: string;
         transformType: "UPSCALE" | "UNZOOM";
     }[];
@@ -248,12 +248,12 @@ export declare const uploadInitImageFromUrlResponseSchema: z.ZodUnion<[z.ZodObje
     uploadInitImageId: z.ZodString;
     url: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    success: true;
     url: string;
+    success: true;
     uploadInitImageId: string;
 }, {
-    success: true;
     url: string;
+    success: true;
     uploadInitImageId: string;
 }>, z.ZodObject<{
     success: z.ZodLiteral<false>;
@@ -266,3 +266,4 @@ export declare const uploadInitImageFromUrlResponseSchema: z.ZodUnion<[z.ZodObje
     success: false;
 }>]>;
 export type UploadInitImageFromUrlResponse = z.infer<typeof uploadInitImageFromUrlResponseSchema>;
+//# sourceMappingURL=types.d.ts.map

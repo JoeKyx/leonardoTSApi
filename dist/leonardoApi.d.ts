@@ -18,3 +18,4 @@ export * from './types';
 export * from './queryParamTypes';
 export * from './responseTypes';
 export * from './validators';
+//# sourceMappingURL=leonardoApi.d.ts.map
