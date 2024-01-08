@@ -1,5 +1,5 @@
-import { GenerateImageQueryParams } from './queryParamTypes';
-import { GenerateImagesResponse, ImageExtension, UploadInitImageFromUrlResponse, UpscaleImageResponse } from './types';
+import { GenerateImageQueryParams } from './queryParamTypes.js';
+import { GenerateImagesResponse, ImageExtension, UploadInitImageFromUrlResponse, UpscaleImageResponse } from './types.js';
 export default class LeonardoAPI {
     private apiKey;
     private baseUrl;

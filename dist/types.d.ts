@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { GenerateImageResponse } from './responseTypes';
+import { GenerateImageResponse } from './responseTypes.js';
 export declare const InvalidValidationResultSchema: z.ZodObject<{
     valid: z.ZodLiteral<false>;
     errors: z.ZodArray<z.ZodString, "many">;

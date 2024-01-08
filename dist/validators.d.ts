@@ -1,4 +1,4 @@
-import { GenerateImageQueryParams } from './queryParamTypes';
+import { GenerateImageQueryParams } from './queryParamTypes.js';
 export declare class ValidationError extends Error {
     constructor(message: string);
 }

@@ -1,12 +1,12 @@
 // TODO: add validation for responses (use zod)
-import { GenerateImageQueryParamsSchema, } from './queryParamTypes';
-import { GenerateImageResponseSchema, } from './responseTypes';
-import { GenerationJobResponseSchema, } from './types';
+import { GenerateImageQueryParamsSchema, } from './queryParamTypes.js';
+import { GenerateImageResponseSchema, } from './responseTypes.js';
+import { GenerationJobResponseSchema, } from './types.js';
 import fs from 'fs';
 import path from 'path';
 import { getGlobals } from 'common-es';
 const { __dirname } = getGlobals(import.meta.url);
-import { getErrorMessage, saveFileTemporarily } from './utils';
+import { getErrorMessage, saveFileTemporarily, } from './utils.js';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 import axios from 'axios';
