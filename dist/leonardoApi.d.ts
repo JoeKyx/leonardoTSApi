@@ -14,8 +14,8 @@ export default class LeonardoAPI {
     private waitForVariationResult;
     private waitForGenerationResult;
 }
-export * from './types';
-export * from './queryParamTypes';
-export * from './responseTypes';
-export * from './validators';
+export * from './types.js';
+export * from './queryParamTypes.js';
+export * from './responseTypes.js';
+export * from './validators.js';
 //# sourceMappingURL=leonardoApi.d.ts.map
