@@ -226,9 +226,11 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
                 trendingScore: number;
                 userId: string;
             }>, "many">;
+            prompt: z.ZodString;
         }, "strip", z.ZodTypeAny, {
             id: string;
             public: boolean;
+            prompt: string;
             status: "COMPLETE" | "FAILED";
             nsfw: boolean;
             createdAt: Date;
@@ -255,6 +257,7 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
         }, {
             id: string;
             public: boolean;
+            prompt: string;
             status: "COMPLETE" | "FAILED";
             nsfw: boolean;
             createdAt: Date;
@@ -283,6 +286,7 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
         object: {
             id: string;
             public: boolean;
+            prompt: string;
             status: "COMPLETE" | "FAILED";
             nsfw: boolean;
             createdAt: Date;
@@ -311,6 +315,7 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
         object: {
             id: string;
             public: boolean;
+            prompt: string;
             status: "COMPLETE" | "FAILED";
             nsfw: boolean;
             createdAt: Date;
@@ -343,6 +348,7 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
         object: {
             id: string;
             public: boolean;
+            prompt: string;
             status: "COMPLETE" | "FAILED";
             nsfw: boolean;
             createdAt: Date;
@@ -377,6 +383,7 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
         object: {
             id: string;
             public: boolean;
+            prompt: string;
             status: "COMPLETE" | "FAILED";
             nsfw: boolean;
             createdAt: Date;
@@ -605,9 +612,11 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
                 trendingScore: number;
                 userId: string;
             }>, "many">;
+            prompt: z.ZodString;
         }, "strip", z.ZodTypeAny, {
             id: string;
             public: boolean;
+            prompt: string;
             status: "COMPLETE" | "FAILED";
             nsfw: boolean;
             createdAt: Date;
@@ -634,6 +643,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
         }, {
             id: string;
             public: boolean;
+            prompt: string;
             status: "COMPLETE" | "FAILED";
             nsfw: boolean;
             createdAt: Date;
@@ -662,6 +672,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
         object: {
             id: string;
             public: boolean;
+            prompt: string;
             status: "COMPLETE" | "FAILED";
             nsfw: boolean;
             createdAt: Date;
@@ -690,6 +701,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
         object: {
             id: string;
             public: boolean;
+            prompt: string;
             status: "COMPLETE" | "FAILED";
             nsfw: boolean;
             createdAt: Date;
@@ -722,6 +734,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
         object: {
             id: string;
             public: boolean;
+            prompt: string;
             status: "COMPLETE" | "FAILED";
             nsfw: boolean;
             createdAt: Date;
@@ -756,6 +769,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
         object: {
             id: string;
             public: boolean;
+            prompt: string;
             status: "COMPLETE" | "FAILED";
             nsfw: boolean;
             createdAt: Date;

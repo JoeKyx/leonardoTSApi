@@ -77,6 +77,7 @@ export const webhookImageGenerationResponseSchema = z.object({
             status: webhookResponseStatusSchema,
             apiKey: apiKeySecretSchema,
             images: z.array(webhookImageSchema),
+            prompt: z.string(),
         }),
     }),
 });

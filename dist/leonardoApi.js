@@ -74,7 +74,10 @@ export default class LeonardoAPI {
                 });
                 return {
                     success: true,
-                    generationResult: genResult.result.images,
+                    generationResult: genResult.result.images.map((image) => ({
+                        ...image,
+                        prompt: genResult.result.prompt,
+                    })),
                 };
             }
             else {

@@ -234,7 +234,9 @@ export declare const UpscaleImageResponseSchema: z.ZodUnion<[z.ZodObject<{
 export type UpscaleImageResponse = z.infer<typeof UpscaleImageResponseSchema>;
 export type GenerateImagesResponse = {
     success: true;
-    generationResult: ResponseImage[];
+    generationResult: (ResponseImage & {
+        prompt: string;
+    })[];
 } | {
     success: false;
     error: string;
