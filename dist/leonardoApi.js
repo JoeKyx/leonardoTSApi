@@ -1,6 +1,5 @@
 // TODO: add validation for responses (use zod)
 import { GenerateImageQueryParamsSchema, } from './queryParamTypes.js';
-import { GenerateImageResponseSchema, } from './responseTypes.js';
 import { GenerationJobResponseSchema, } from './types.js';
 import fs from 'fs';
 import path from 'path';
@@ -10,14 +9,29 @@ import { getErrorMessage, saveFileTemporarily, } from './utils.js';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 import axios from 'axios';
+import { default as express } from 'express';
+import { EventEmitter } from 'events';
+class GenerationEventEmitter extends EventEmitter {
+}
+const generationEventEmitter = new GenerationEventEmitter();
+class UpscaleEventEmitter extends EventEmitter {
+}
+const upscaleEventEmitter = new UpscaleEventEmitter();
 export default class LeonardoAPI {
     apiKey;
     baseUrl = 'https://cloud.leonardo.ai/api/rest/v1';
     baseCDNUrl = 'https://cdn.leonardo.ai/';
     generationTimeout;
-    constructor(apiKey, generationTimeout = 120000) {
+    constructor(apiKey, webhookApiKey, generationTimeout = 120000, port = 8080) {
         this.apiKey = apiKey;
         this.generationTimeout = generationTimeout;
+        const app = express();
+        app.use(express.json());
+        app.use(express.urlencoded({ extended: true }));
+        app.post('/webhook-endpoint', this.webhookHandler);
+        app.listen(port, () => {
+            console.log('Server running on port ' + port);
+        });
     }
     async generateImages(params) {
         try {
@@ -54,10 +68,13 @@ export default class LeonardoAPI {
         try {
             const generationId = generationJobResponse.sdGenerationJob.generationId;
             const genResult = await this.waitForGenerationResult(generationId);
-            if (genResult.success && genResult.generationResult) {
+            if (genResult.success && genResult.result) {
+                genResult.result.images.forEach((image) => {
+                    console.log(image.id);
+                });
                 return {
                     success: true,
-                    generationResult: genResult.generationResult,
+                    generationResult: genResult.result.images,
                 };
             }
             else {
@@ -95,19 +112,19 @@ export default class LeonardoAPI {
         }
         const upscaleId = upscaleJobResponse.sdUpscaleJob.id;
         const upscaleResult = await this.waitForVariationResult(upscaleId);
-        if (upscaleResult.success) {
+        if (upscaleResult && upscaleResult.success) {
             return {
                 success: true,
                 upscaleResult: {
-                    url: upscaleResult.variationResult.url,
-                    id: upscaleResult.variationResult.id,
+                    url: upscaleResult.result.url,
+                    id: upscaleResult.result.id,
                 },
             };
         }
         else {
             return {
                 success: false,
-                error: 'Upscale timeout',
+                error: upscaleResult.message,
             };
         }
     }
@@ -186,73 +203,57 @@ export default class LeonardoAPI {
         }
     }
     async waitForVariationResult(variationId) {
-        const variationResultUrl = `${this.baseUrl}/variations/${variationId}`;
-        let variationResult;
-        const startTime = Date.now();
-        do {
-            const variationResultResponse = await fetch(variationResultUrl, {
-                method: 'GET',
-                headers: {
-                    accept: 'application/json',
-                    authorization: `Bearer ${this.apiKey}`,
-                },
+        return new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+                reject({
+                    success: false,
+                    message: 'Upscale timeout',
+                });
+            }, this.generationTimeout);
+            upscaleEventEmitter.once(`upscale-complete-${variationId}`, (variationResult) => {
+                clearTimeout(timeout);
+                resolve({
+                    success: true,
+                    result: variationResult,
+                });
             });
-            variationResult =
-                (await variationResultResponse.json());
-            if (variationResult.generated_image_variation_generic[0]?.status ===
-                'PENDING' ||
-                !variationResult.generated_image_variation_generic[0]?.status) {
-                // Wait for 1 second before next check
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                // Check if 2 minutes have elapsed
-                if (Date.now() - startTime > this.generationTimeout) {
-                    console.log('Variation result timeout.');
-                    return {
-                        success: false,
-                        variationResult: variationResult.generated_image_variation_generic[0],
-                    };
-                }
-            }
-        } while (variationResult.generated_image_variation_generic[0]?.status ===
-            'PENDING' ||
-            !variationResult.generated_image_variation_generic[0]?.status);
-        return {
-            success: true,
-            variationResult: variationResult.generated_image_variation_generic[0],
-        };
+        });
     }
     async waitForGenerationResult(generationId) {
-        const generationResultUrl = `${this.baseUrl}/generations/${generationId}`;
-        let generationResult;
-        const startTime = Date.now();
-        do {
-            const generationResultResponse = await fetch(generationResultUrl, {
-                method: 'GET',
-                headers: {
-                    accept: 'application/json',
-                    authorization: `Bearer ${this.apiKey}`,
-                },
+        return new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+                reject({
+                    success: false,
+                    message: 'Generation timeout',
+                });
+            }, this.generationTimeout);
+            generationEventEmitter.once(`generation-complete-${generationId}`, (generationResult) => {
+                clearTimeout(timeout);
+                resolve({
+                    success: true,
+                    result: generationResult,
+                });
             });
-            generationResult =
-                (await generationResultResponse.json());
-            console.log('Generation result:');
-            console.log(generationResult.generations_by_pk?.status);
-            if (generationResult.generations_by_pk?.status === 'PENDING') {
-                // Wait for 1 second before next check
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                // Check if 2 minutes have elapsed
-                if (Date.now() - startTime > this.generationTimeout) {
-                    console.log('Generation result timeout.');
-                    return {
-                        success: false,
-                        generationResult: generationResult.generations_by_pk,
-                    };
-                }
-            }
-        } while (generationResult.generations_by_pk?.status === 'PENDING');
+        });
+    }
+    webhookHandler = async (req, res) => {
+        console.log(req.body);
+        const generationResultResponse = req.body;
+        // Check api key
+        if (generationResultResponse.data.object.apiKey.webhookCallbackApiKey !==
+            this.apiKey) {
+            return {
+                success: false,
+                error: 'Invalid api key',
+            };
+        }
         try {
-            console.log(generationResult.generations_by_pk);
-            GenerateImageResponseSchema.parse(generationResult.generations_by_pk);
+            if (generationResultResponse.type === 'image_generation.complete') {
+                generationEventEmitter.emit(`generation-complete-${generationResultResponse.data.object.id}`, generationResultResponse.data.object);
+            }
+            if (generationResultResponse.type === 'post_processing.complete') {
+                upscaleEventEmitter.emit(`upscale-complete-${generationResultResponse.data.object.id}`, generationResultResponse.data.object);
+            }
         }
         catch (error) {
             console.log('ERROR');
@@ -262,12 +263,9 @@ export default class LeonardoAPI {
                 error: getErrorMessage(error),
             };
         }
-        return {
-            success: true,
-            generationResult: generationResult.generations_by_pk,
-        };
-    }
+    };
 }
+//  TODO:  convert response to right format
 export * from './types.js';
 export * from './queryParamTypes.js';
 export * from './responseTypes.js';

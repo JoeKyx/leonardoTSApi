@@ -123,4 +123,821 @@ export declare const GenerateImageResponseSchema: z.ZodObject<{
 }>;
 export type GenerateImageResponse = z.infer<typeof GenerateImageResponseSchema>;
 export type GeneratedImage = z.infer<typeof GeneratedImageSchema>;
+export declare const webhookResponseStatusSchema: z.ZodUnion<[z.ZodLiteral<"COMPLETE">, z.ZodLiteral<"FAILED">]>;
+export declare const webhookImageSchema: z.ZodObject<{
+    createdAt: z.ZodDate;
+    generationId: z.ZodString;
+    id: z.ZodString;
+    nsfw: z.ZodBoolean;
+    public: z.ZodBoolean;
+    likeCount: z.ZodNumber;
+    motionGIFURL: z.ZodNullable<z.ZodString>;
+    motionMP4URL: z.ZodNullable<z.ZodString>;
+    teamId: z.ZodNullable<z.ZodString>;
+    trendingScore: z.ZodNumber;
+    url: z.ZodNullable<z.ZodString>;
+    userId: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    id: string;
+    url: string | null;
+    public: boolean;
+    nsfw: boolean;
+    likeCount: number;
+    createdAt: Date;
+    generationId: string;
+    motionGIFURL: string | null;
+    motionMP4URL: string | null;
+    teamId: string | null;
+    trendingScore: number;
+    userId: string;
+}, {
+    id: string;
+    url: string | null;
+    public: boolean;
+    nsfw: boolean;
+    likeCount: number;
+    createdAt: Date;
+    generationId: string;
+    motionGIFURL: string | null;
+    motionMP4URL: string | null;
+    teamId: string | null;
+    trendingScore: number;
+    userId: string;
+}>;
+export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
+    type: z.ZodLiteral<"image_generation.complete">;
+    object: z.ZodString;
+    timestamp: z.ZodDate;
+    api_version: z.ZodString;
+    data: z.ZodObject<{
+        object: z.ZodObject<{
+            id: z.ZodString;
+            createdAt: z.ZodDate;
+            updatedAt: z.ZodDate;
+            userId: z.ZodString;
+            public: z.ZodBoolean;
+            flagged: z.ZodBoolean;
+            nsfw: z.ZodBoolean;
+            status: z.ZodUnion<[z.ZodLiteral<"COMPLETE">, z.ZodLiteral<"FAILED">]>;
+            apiKey: z.ZodObject<{
+                webhookCallbackApiKey: z.ZodString;
+            }, "strip", z.ZodTypeAny, {
+                webhookCallbackApiKey: string;
+            }, {
+                webhookCallbackApiKey: string;
+            }>;
+            images: z.ZodArray<z.ZodObject<{
+                createdAt: z.ZodDate;
+                generationId: z.ZodString;
+                id: z.ZodString;
+                nsfw: z.ZodBoolean;
+                public: z.ZodBoolean;
+                likeCount: z.ZodNumber;
+                motionGIFURL: z.ZodNullable<z.ZodString>;
+                motionMP4URL: z.ZodNullable<z.ZodString>;
+                teamId: z.ZodNullable<z.ZodString>;
+                trendingScore: z.ZodNumber;
+                url: z.ZodNullable<z.ZodString>;
+                userId: z.ZodString;
+            }, "strip", z.ZodTypeAny, {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }, {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }>, "many">;
+        }, "strip", z.ZodTypeAny, {
+            id: string;
+            public: boolean;
+            status: "COMPLETE" | "FAILED";
+            nsfw: boolean;
+            createdAt: Date;
+            userId: string;
+            updatedAt: Date;
+            flagged: boolean;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            images: {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }[];
+        }, {
+            id: string;
+            public: boolean;
+            status: "COMPLETE" | "FAILED";
+            nsfw: boolean;
+            createdAt: Date;
+            userId: string;
+            updatedAt: Date;
+            flagged: boolean;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            images: {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }[];
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        object: {
+            id: string;
+            public: boolean;
+            status: "COMPLETE" | "FAILED";
+            nsfw: boolean;
+            createdAt: Date;
+            userId: string;
+            updatedAt: Date;
+            flagged: boolean;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            images: {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }[];
+        };
+    }, {
+        object: {
+            id: string;
+            public: boolean;
+            status: "COMPLETE" | "FAILED";
+            nsfw: boolean;
+            createdAt: Date;
+            userId: string;
+            updatedAt: Date;
+            flagged: boolean;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            images: {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }[];
+        };
+    }>;
+}, "strip", z.ZodTypeAny, {
+    object: string;
+    type: "image_generation.complete";
+    data: {
+        object: {
+            id: string;
+            public: boolean;
+            status: "COMPLETE" | "FAILED";
+            nsfw: boolean;
+            createdAt: Date;
+            userId: string;
+            updatedAt: Date;
+            flagged: boolean;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            images: {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }[];
+        };
+    };
+    timestamp: Date;
+    api_version: string;
+}, {
+    object: string;
+    type: "image_generation.complete";
+    data: {
+        object: {
+            id: string;
+            public: boolean;
+            status: "COMPLETE" | "FAILED";
+            nsfw: boolean;
+            createdAt: Date;
+            userId: string;
+            updatedAt: Date;
+            flagged: boolean;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            images: {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }[];
+        };
+    };
+    timestamp: Date;
+    api_version: string;
+}>;
+export declare const webhookPostProcessingResponseSchema: z.ZodObject<{
+    type: z.ZodLiteral<"post_processing.complete">;
+    object: z.ZodString;
+    timestamp: z.ZodDate;
+    api_version: z.ZodString;
+    data: z.ZodObject<{
+        object: z.ZodObject<{
+            id: z.ZodString;
+            createdAt: z.ZodDate;
+            updatedAt: z.ZodDate;
+            status: z.ZodString;
+            url: z.ZodString;
+            transparent: z.ZodBoolean;
+            generatedImageId: z.ZodString;
+            transformType: z.ZodString;
+            api: z.ZodBoolean;
+            tokenCost: z.ZodNumber;
+            apiDollarCost: z.ZodNumber;
+            apiKey: z.ZodObject<{
+                webhookCallbackApiKey: z.ZodString;
+            }, "strip", z.ZodTypeAny, {
+                webhookCallbackApiKey: string;
+            }, {
+                webhookCallbackApiKey: string;
+            }>;
+        }, "strip", z.ZodTypeAny, {
+            transparent: boolean;
+            id: string;
+            url: string;
+            status: string;
+            createdAt: Date;
+            updatedAt: Date;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            generatedImageId: string;
+            transformType: string;
+            api: boolean;
+            tokenCost: number;
+            apiDollarCost: number;
+        }, {
+            transparent: boolean;
+            id: string;
+            url: string;
+            status: string;
+            createdAt: Date;
+            updatedAt: Date;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            generatedImageId: string;
+            transformType: string;
+            api: boolean;
+            tokenCost: number;
+            apiDollarCost: number;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        object: {
+            transparent: boolean;
+            id: string;
+            url: string;
+            status: string;
+            createdAt: Date;
+            updatedAt: Date;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            generatedImageId: string;
+            transformType: string;
+            api: boolean;
+            tokenCost: number;
+            apiDollarCost: number;
+        };
+    }, {
+        object: {
+            transparent: boolean;
+            id: string;
+            url: string;
+            status: string;
+            createdAt: Date;
+            updatedAt: Date;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            generatedImageId: string;
+            transformType: string;
+            api: boolean;
+            tokenCost: number;
+            apiDollarCost: number;
+        };
+    }>;
+}, "strip", z.ZodTypeAny, {
+    object: string;
+    type: "post_processing.complete";
+    data: {
+        object: {
+            transparent: boolean;
+            id: string;
+            url: string;
+            status: string;
+            createdAt: Date;
+            updatedAt: Date;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            generatedImageId: string;
+            transformType: string;
+            api: boolean;
+            tokenCost: number;
+            apiDollarCost: number;
+        };
+    };
+    timestamp: Date;
+    api_version: string;
+}, {
+    object: string;
+    type: "post_processing.complete";
+    data: {
+        object: {
+            transparent: boolean;
+            id: string;
+            url: string;
+            status: string;
+            createdAt: Date;
+            updatedAt: Date;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            generatedImageId: string;
+            transformType: string;
+            api: boolean;
+            tokenCost: number;
+            apiDollarCost: number;
+        };
+    };
+    timestamp: Date;
+    api_version: string;
+}>;
+export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
+    type: z.ZodLiteral<"image_generation.complete">;
+    object: z.ZodString;
+    timestamp: z.ZodDate;
+    api_version: z.ZodString;
+    data: z.ZodObject<{
+        object: z.ZodObject<{
+            id: z.ZodString;
+            createdAt: z.ZodDate;
+            updatedAt: z.ZodDate;
+            userId: z.ZodString;
+            public: z.ZodBoolean;
+            flagged: z.ZodBoolean;
+            nsfw: z.ZodBoolean;
+            status: z.ZodUnion<[z.ZodLiteral<"COMPLETE">, z.ZodLiteral<"FAILED">]>;
+            apiKey: z.ZodObject<{
+                webhookCallbackApiKey: z.ZodString;
+            }, "strip", z.ZodTypeAny, {
+                webhookCallbackApiKey: string;
+            }, {
+                webhookCallbackApiKey: string;
+            }>;
+            images: z.ZodArray<z.ZodObject<{
+                createdAt: z.ZodDate;
+                generationId: z.ZodString;
+                id: z.ZodString;
+                nsfw: z.ZodBoolean;
+                public: z.ZodBoolean;
+                likeCount: z.ZodNumber;
+                motionGIFURL: z.ZodNullable<z.ZodString>;
+                motionMP4URL: z.ZodNullable<z.ZodString>;
+                teamId: z.ZodNullable<z.ZodString>;
+                trendingScore: z.ZodNumber;
+                url: z.ZodNullable<z.ZodString>;
+                userId: z.ZodString;
+            }, "strip", z.ZodTypeAny, {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }, {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }>, "many">;
+        }, "strip", z.ZodTypeAny, {
+            id: string;
+            public: boolean;
+            status: "COMPLETE" | "FAILED";
+            nsfw: boolean;
+            createdAt: Date;
+            userId: string;
+            updatedAt: Date;
+            flagged: boolean;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            images: {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }[];
+        }, {
+            id: string;
+            public: boolean;
+            status: "COMPLETE" | "FAILED";
+            nsfw: boolean;
+            createdAt: Date;
+            userId: string;
+            updatedAt: Date;
+            flagged: boolean;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            images: {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }[];
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        object: {
+            id: string;
+            public: boolean;
+            status: "COMPLETE" | "FAILED";
+            nsfw: boolean;
+            createdAt: Date;
+            userId: string;
+            updatedAt: Date;
+            flagged: boolean;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            images: {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }[];
+        };
+    }, {
+        object: {
+            id: string;
+            public: boolean;
+            status: "COMPLETE" | "FAILED";
+            nsfw: boolean;
+            createdAt: Date;
+            userId: string;
+            updatedAt: Date;
+            flagged: boolean;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            images: {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }[];
+        };
+    }>;
+}, "strip", z.ZodTypeAny, {
+    object: string;
+    type: "image_generation.complete";
+    data: {
+        object: {
+            id: string;
+            public: boolean;
+            status: "COMPLETE" | "FAILED";
+            nsfw: boolean;
+            createdAt: Date;
+            userId: string;
+            updatedAt: Date;
+            flagged: boolean;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            images: {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }[];
+        };
+    };
+    timestamp: Date;
+    api_version: string;
+}, {
+    object: string;
+    type: "image_generation.complete";
+    data: {
+        object: {
+            id: string;
+            public: boolean;
+            status: "COMPLETE" | "FAILED";
+            nsfw: boolean;
+            createdAt: Date;
+            userId: string;
+            updatedAt: Date;
+            flagged: boolean;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            images: {
+                id: string;
+                url: string | null;
+                public: boolean;
+                nsfw: boolean;
+                likeCount: number;
+                createdAt: Date;
+                generationId: string;
+                motionGIFURL: string | null;
+                motionMP4URL: string | null;
+                teamId: string | null;
+                trendingScore: number;
+                userId: string;
+            }[];
+        };
+    };
+    timestamp: Date;
+    api_version: string;
+}>, z.ZodObject<{
+    type: z.ZodLiteral<"post_processing.complete">;
+    object: z.ZodString;
+    timestamp: z.ZodDate;
+    api_version: z.ZodString;
+    data: z.ZodObject<{
+        object: z.ZodObject<{
+            id: z.ZodString;
+            createdAt: z.ZodDate;
+            updatedAt: z.ZodDate;
+            status: z.ZodString;
+            url: z.ZodString;
+            transparent: z.ZodBoolean;
+            generatedImageId: z.ZodString;
+            transformType: z.ZodString;
+            api: z.ZodBoolean;
+            tokenCost: z.ZodNumber;
+            apiDollarCost: z.ZodNumber;
+            apiKey: z.ZodObject<{
+                webhookCallbackApiKey: z.ZodString;
+            }, "strip", z.ZodTypeAny, {
+                webhookCallbackApiKey: string;
+            }, {
+                webhookCallbackApiKey: string;
+            }>;
+        }, "strip", z.ZodTypeAny, {
+            transparent: boolean;
+            id: string;
+            url: string;
+            status: string;
+            createdAt: Date;
+            updatedAt: Date;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            generatedImageId: string;
+            transformType: string;
+            api: boolean;
+            tokenCost: number;
+            apiDollarCost: number;
+        }, {
+            transparent: boolean;
+            id: string;
+            url: string;
+            status: string;
+            createdAt: Date;
+            updatedAt: Date;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            generatedImageId: string;
+            transformType: string;
+            api: boolean;
+            tokenCost: number;
+            apiDollarCost: number;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        object: {
+            transparent: boolean;
+            id: string;
+            url: string;
+            status: string;
+            createdAt: Date;
+            updatedAt: Date;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            generatedImageId: string;
+            transformType: string;
+            api: boolean;
+            tokenCost: number;
+            apiDollarCost: number;
+        };
+    }, {
+        object: {
+            transparent: boolean;
+            id: string;
+            url: string;
+            status: string;
+            createdAt: Date;
+            updatedAt: Date;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            generatedImageId: string;
+            transformType: string;
+            api: boolean;
+            tokenCost: number;
+            apiDollarCost: number;
+        };
+    }>;
+}, "strip", z.ZodTypeAny, {
+    object: string;
+    type: "post_processing.complete";
+    data: {
+        object: {
+            transparent: boolean;
+            id: string;
+            url: string;
+            status: string;
+            createdAt: Date;
+            updatedAt: Date;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            generatedImageId: string;
+            transformType: string;
+            api: boolean;
+            tokenCost: number;
+            apiDollarCost: number;
+        };
+    };
+    timestamp: Date;
+    api_version: string;
+}, {
+    object: string;
+    type: "post_processing.complete";
+    data: {
+        object: {
+            transparent: boolean;
+            id: string;
+            url: string;
+            status: string;
+            createdAt: Date;
+            updatedAt: Date;
+            apiKey: {
+                webhookCallbackApiKey: string;
+            };
+            generatedImageId: string;
+            transformType: string;
+            api: boolean;
+            tokenCost: number;
+            apiDollarCost: number;
+        };
+    };
+    timestamp: Date;
+    api_version: string;
+}>]>;
+export type WebhookImageGenerationResponse = z.infer<typeof webhookImageGenerationResponseSchema>;
+export type ResponseImage = z.infer<typeof webhookImageSchema>;
+export type WebhookGenerationResultObject = z.infer<typeof webhookImageGenerationResponseSchema>['data']['object'];
+export type WebhookPostProcessingResultObject = z.infer<typeof webhookPostProcessingResponseSchema>['data']['object'];
+export type GenerationResult = {
+    success: false;
+    message: string;
+} | {
+    success: true;
+    result: WebhookGenerationResultObject;
+};
+export type VariationResult = {
+    success: false;
+    message: string;
+} | {
+    success: true;
+    result: WebhookPostProcessingResultObject;
+};
+export type WebhookResponse = z.infer<typeof webhookResponseSchema>;
 //# sourceMappingURL=responseTypes.d.ts.map

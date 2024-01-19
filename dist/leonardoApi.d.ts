@@ -5,7 +5,7 @@ export default class LeonardoAPI {
     private baseUrl;
     private baseCDNUrl;
     private generationTimeout;
-    constructor(apiKey: string, generationTimeout?: number);
+    constructor(apiKey: string, webhookApiKey: string, generationTimeout?: number, port?: number);
     generateImages(params: GenerateImageQueryParams): Promise<GenerateImagesResponse>;
     upscaleImage(imageId: string): Promise<UpscaleImageResponse>;
     uploadInitImageFromUrl: (url: string, fileExtension: ImageExtension) => Promise<UploadInitImageFromUrlResponse>;
@@ -13,6 +13,7 @@ export default class LeonardoAPI {
     private uploadImageFromUrl;
     private waitForVariationResult;
     private waitForGenerationResult;
+    private webhookHandler;
 }
 export * from './types.js';
 export * from './queryParamTypes.js';

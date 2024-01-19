@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { GenerateImageResponse } from './responseTypes.js'
+import { GenerateImageResponse, ResponseImage } from './responseTypes.js'
 export const InvalidValidationResultSchema = z.object({
   valid: z.literal(false),
   errors: z.array(z.string()),
@@ -104,14 +104,10 @@ export const UpscaleImageResponseSchema = z.union([
 
 export type UpscaleImageResponse = z.infer<typeof UpscaleImageResponseSchema>
 
-export type GenerationResultResponse = {
-  generations_by_pk: GenerateImageResponse | null | undefined
-}
-
 export type GenerateImagesResponse =
   | {
       success: true
-      generationResult: GenerateImageResponse
+      generationResult: ResponseImage[]
     }
   | {
       success: false

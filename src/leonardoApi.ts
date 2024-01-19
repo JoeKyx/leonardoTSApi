@@ -7,12 +7,17 @@ import {
 import {
   GenerateImageResponse,
   GenerateImageResponseSchema,
+  GenerationResult,
+  VariationResult,
+  WebhookGenerationResultObject,
+  WebhookPostProcessingResultObject,
+  WebhookResponse,
+  webhookImageGenerationResponseSchema,
 } from './responseTypes.js'
 import {
   GenerateImagesResponse,
   GenerationJobResponse,
   GenerationJobResponseSchema,
-  GenerationResultResponse,
   ImageExtension,
   ImageUploadInitResponse,
   UploadInitImageFromUrlResponse,
@@ -33,6 +38,15 @@ import fetch from 'node-fetch'
 import FormData from 'form-data'
 
 import axios from 'axios'
+import { default as e, default as express } from 'express'
+
+import { EventEmitter } from 'events'
+
+class GenerationEventEmitter extends EventEmitter {}
+const generationEventEmitter = new GenerationEventEmitter()
+
+class UpscaleEventEmitter extends EventEmitter {}
+const upscaleEventEmitter = new UpscaleEventEmitter()
 
 export default class LeonardoAPI {
   private apiKey: string
@@ -40,9 +54,21 @@ export default class LeonardoAPI {
   private baseCDNUrl: string = 'https://cdn.leonardo.ai/'
   private generationTimeout: number
 
-  constructor(apiKey: string, generationTimeout = 120000) {
+  constructor(
+    apiKey: string,
+    webhookApiKey: string,
+    generationTimeout = 120000,
+    port = 8080
+  ) {
     this.apiKey = apiKey
     this.generationTimeout = generationTimeout
+    const app = express()
+    app.use(express.json())
+    app.use(express.urlencoded({ extended: true }))
+    app.post('/webhook-endpoint', this.webhookHandler)
+    app.listen(port, () => {
+      console.log('Server running on port ' + port)
+    })
   }
 
   public async generateImages(
@@ -86,10 +112,13 @@ export default class LeonardoAPI {
       const generationId = generationJobResponse.sdGenerationJob.generationId
       const genResult = await this.waitForGenerationResult(generationId)
 
-      if (genResult.success && genResult.generationResult) {
+      if (genResult.success && genResult.result) {
+        genResult.result.images.forEach((image) => {
+          console.log(image.id)
+        })
         return {
           success: true,
-          generationResult: genResult.generationResult,
+          generationResult: genResult.result.images,
         }
       } else {
         return {
@@ -128,18 +157,18 @@ export default class LeonardoAPI {
 
     const upscaleId = upscaleJobResponse.sdUpscaleJob.id
     const upscaleResult = await this.waitForVariationResult(upscaleId)
-    if (upscaleResult.success) {
+    if (upscaleResult && upscaleResult.success) {
       return {
         success: true,
         upscaleResult: {
-          url: upscaleResult.variationResult.url,
-          id: upscaleResult.variationResult.id,
+          url: upscaleResult.result.url,
+          id: upscaleResult.result.id,
         },
       }
     } else {
       return {
         success: false,
-        error: 'Upscale timeout',
+        error: upscaleResult.message,
       }
     }
   }
@@ -235,86 +264,78 @@ export default class LeonardoAPI {
     }
   }
 
-  private async waitForVariationResult(variationId: string) {
-    const variationResultUrl = `${this.baseUrl}/variations/${variationId}`
-    let variationResult: VariationResultResponse
-    const startTime = Date.now()
-
-    do {
-      const variationResultResponse = await fetch(variationResultUrl, {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          authorization: `Bearer ${this.apiKey}`,
-        },
-      })
-      variationResult =
-        (await variationResultResponse.json()) as VariationResultResponse
-      if (
-        variationResult.generated_image_variation_generic[0]?.status ===
-          'PENDING' ||
-        !variationResult.generated_image_variation_generic[0]?.status
-      ) {
-        // Wait for 1 second before next check
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
-        // Check if 2 minutes have elapsed
-        if (Date.now() - startTime > this.generationTimeout) {
-          console.log('Variation result timeout.')
-          return {
-            success: false,
-            variationResult:
-              variationResult.generated_image_variation_generic[0],
-          }
+  private async waitForVariationResult(
+    variationId: string
+  ): Promise<VariationResult> {
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject({
+          success: false,
+          message: 'Upscale timeout',
+        })
+      }, this.generationTimeout)
+      upscaleEventEmitter.once(
+        `upscale-complete-${variationId}`,
+        (variationResult: WebhookPostProcessingResultObject) => {
+          clearTimeout(timeout)
+          resolve({
+            success: true,
+            result: variationResult,
+          })
         }
-      }
-    } while (
-      variationResult.generated_image_variation_generic[0]?.status ===
-        'PENDING' ||
-      !variationResult.generated_image_variation_generic[0]?.status
-    )
-    return {
-      success: true,
-      variationResult: variationResult.generated_image_variation_generic[0],
-    }
+      )
+    })
   }
 
-  private async waitForGenerationResult(generationId: string) {
-    const generationResultUrl = `${this.baseUrl}/generations/${generationId}`
-    let generationResult: GenerationResultResponse
-    const startTime = Date.now()
-
-    do {
-      const generationResultResponse = await fetch(generationResultUrl, {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          authorization: `Bearer ${this.apiKey}`,
-        },
-      })
-      generationResult =
-        (await generationResultResponse.json()) as GenerationResultResponse
-
-      console.log('Generation result:')
-      console.log(generationResult.generations_by_pk?.status)
-      if (generationResult.generations_by_pk?.status === 'PENDING') {
-        // Wait for 1 second before next check
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
-        // Check if 2 minutes have elapsed
-        if (Date.now() - startTime > this.generationTimeout) {
-          console.log('Generation result timeout.')
-          return {
-            success: false,
-            generationResult: generationResult.generations_by_pk,
-          }
+  private async waitForGenerationResult(
+    generationId: string
+  ): Promise<GenerationResult> {
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject({
+          success: false,
+          message: 'Generation timeout',
+        })
+      }, this.generationTimeout)
+      generationEventEmitter.once(
+        `generation-complete-${generationId}`,
+        (generationResult: WebhookGenerationResultObject) => {
+          clearTimeout(timeout)
+          resolve({
+            success: true,
+            result: generationResult,
+          })
         }
-      }
-    } while (generationResult.generations_by_pk?.status === 'PENDING')
+      )
+    })
+  }
 
+  private webhookHandler = async (req: e.Request, res: e.Response) => {
+    console.log(req.body)
+    const generationResultResponse = req.body as WebhookResponse
+    // Check api key
+    if (
+      generationResultResponse.data.object.apiKey.webhookCallbackApiKey !==
+      this.apiKey
+    ) {
+      return {
+        success: false,
+        error: 'Invalid api key',
+      }
+    }
     try {
-      console.log(generationResult.generations_by_pk)
-      GenerateImageResponseSchema.parse(generationResult.generations_by_pk)
+      if (generationResultResponse.type === 'image_generation.complete') {
+        generationEventEmitter.emit(
+          `generation-complete-${generationResultResponse.data.object.id}`,
+          generationResultResponse.data.object
+        )
+      }
+      if (generationResultResponse.type === 'post_processing.complete') {
+        upscaleEventEmitter.emit(
+          `upscale-complete-${generationResultResponse.data.object.id}`,
+          generationResultResponse.data.object
+        )
+      }
     } catch (error) {
       console.log('ERROR')
       console.log(getErrorMessage(error))
@@ -323,12 +344,10 @@ export default class LeonardoAPI {
         error: getErrorMessage(error),
       }
     }
-    return {
-      success: true,
-      generationResult: generationResult.generations_by_pk,
-    }
   }
 }
+
+//  TODO:  convert response to right format
 
 export * from './types.js'
 export * from './queryParamTypes.js'
