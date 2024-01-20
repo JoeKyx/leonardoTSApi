@@ -8,7 +8,7 @@ import FormData from 'form-data';
 import axios from 'axios';
 import { default as express } from 'express';
 import { EventEmitter } from 'events';
-import { GenerationJobResponseSchema } from './schemas.js';
+import { GenerationJobResponseSchema, webhookResponseSchema, } from './schemas.js';
 import { GenerateImageQueryParamsSchema, } from './queryParamTypes.js';
 class GenerationEventEmitter extends EventEmitter {
 }
@@ -21,9 +21,11 @@ export default class LeonardoAPI {
     baseUrl = 'https://cloud.leonardo.ai/api/rest/v1';
     baseCDNUrl = 'https://cdn.leonardo.ai/';
     generationTimeout;
+    webhookApiKey;
     constructor(apiKey, webhookApiKey, generationTimeout = 120000, port = 8080) {
         this.apiKey = apiKey;
         this.generationTimeout = generationTimeout;
+        this.webhookApiKey = webhookApiKey;
         const app = express();
         app.use(express.json());
         app.use(express.urlencoded({ extended: true }));
@@ -217,6 +219,7 @@ export default class LeonardoAPI {
                     message: 'Generation timeout',
                 });
             }, this.generationTimeout);
+            console.log('Waiting for generation result ' + generationId + '...');
             generationEventEmitter.once(`generation-complete-${generationId}`, (generationResult) => {
                 clearTimeout(timeout);
                 resolve({
@@ -234,21 +237,29 @@ export default class LeonardoAPI {
         });
     }
     webhookHandler = async (req, res) => {
-        console.log(req.body);
-        const generationResultResponse = req.body;
+        console.log('Webhook received');
+        const generationResultResponse = webhookResponseSchema.parse(req.body);
+        console.log('Webhook response:');
+        console.log(generationResultResponse);
+        console.log('Api key:');
+        console.log(generationResultResponse.data.object.apiKey);
+        console.log('Right api key:');
+        console.log(this.webhookApiKey);
         // Check api key
-        if (generationResultResponse.data.object.apiKey.webhookCallbackApiKey !==
-            this.apiKey) {
-            return {
-                success: false,
-                error: 'Invalid api key',
-            };
+        if (generationResultResponse.data.object.apiKey.webhookCallbackApiKey ==
+            this.webhookApiKey) {
+            console.log('Valid api key');
+        }
+        else {
+            console.log('Invalid api key');
+            throw new Error('Invalid api key');
         }
         try {
-            if (generationResultResponse.type === 'image_generation.complete') {
+            console.log('Trying to emit');
+            if (generationResultResponse.type == 'image_generation.complete') {
                 generationEventEmitter.emit(`generation-complete-${generationResultResponse.data.object.id}`, generationResultResponse.data.object);
             }
-            if (generationResultResponse.type === 'post_processing.complete') {
+            if (generationResultResponse.type == 'post_processing.complete') {
                 upscaleEventEmitter.emit(`upscale-complete-${generationResultResponse.data.object.id}`, generationResultResponse.data.object);
             }
         }

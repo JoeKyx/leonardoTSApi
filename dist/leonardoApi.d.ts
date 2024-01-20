@@ -5,6 +5,7 @@ export default class LeonardoAPI {
     private baseUrl;
     private baseCDNUrl;
     private generationTimeout;
+    private webhookApiKey;
     constructor(apiKey: string, webhookApiKey: string, generationTimeout?: number, port?: number);
     generateImages(params: GenerateImageQueryParams): Promise<GenerationResult>;
     upscaleImage(imageId: string): Promise<UpscaleImageResponse>;
