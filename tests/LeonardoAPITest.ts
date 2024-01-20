@@ -12,3 +12,17 @@ const leoApi = new LeonardoAPI(
   process.env.LEONARDO_API_KEY,
   process.env.LEO_WEBHOOK_API_KEY
 )
+
+console.log(process.env.LEONARDO_API_KEY)
+console.log(process.env.LEO_WEBHOOK_API_KEY)
+
+leoApi
+  .generateImages({
+    prompt: 'A cute cat',
+  })
+  .then((result) => {
+    console.log(result)
+  })
+  .catch((error) => {
+    console.error(error)
+  })
