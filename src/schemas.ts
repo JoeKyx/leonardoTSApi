@@ -5,7 +5,7 @@ import {
   PresetStylePhotoRealSchema,
   SchedulerSchema,
   StableDiffusionVersionSchema,
-} from './queryParamTypes'
+} from './queryParamTypes.js'
 
 export const InvalidValidationResultSchema = z.object({
   valid: z.literal(false),

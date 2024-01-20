@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PresetStyleAlchemySchema, PresetStyleDefaultSchema, PresetStylePhotoRealSchema, SchedulerSchema, StableDiffusionVersionSchema, } from './queryParamTypes';
+import { PresetStyleAlchemySchema, PresetStyleDefaultSchema, PresetStylePhotoRealSchema, SchedulerSchema, StableDiffusionVersionSchema, } from './queryParamTypes.js';
 export const InvalidValidationResultSchema = z.object({
     valid: z.literal(false),
     errors: z.array(z.string()),
