@@ -30,6 +30,9 @@ export default class LeonardoAPI {
         app.use(express.json());
         app.use(express.urlencoded({ extended: true }));
         app.post('/webhook-endpoint', this.webhookHandler);
+        app.get('/', (req, res) => {
+            res.send('Leonardo API');
+        });
         app.listen(port, () => {
             console.log('Server running on port ' + port);
         });
