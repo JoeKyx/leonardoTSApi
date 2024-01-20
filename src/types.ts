@@ -1,5 +1,7 @@
 import { z } from 'zod'
 import {
+  UpscaleImageResponseSchema,
+  uploadInitImageFromUrlResponseSchema,
   webhookImageGenerationResponseSchema,
   webhookPostProcessingResponseSchema,
   webhookResponseSchema,
@@ -93,20 +95,6 @@ export type VariationResultResponse = z.infer<
   typeof VariationResultResponseSchema
 >
 
-export const UpscaleImageResponseSchema = z.union([
-  z.object({
-    success: z.literal(true),
-    upscaleResult: z.object({
-      url: z.string(),
-      id: z.string(),
-    }),
-  }),
-  z.object({
-    success: z.literal(false),
-    error: z.string(),
-  }),
-])
-
 export type UpscaleImageResponse = z.infer<typeof UpscaleImageResponseSchema>
 
 export type GenerationResultImage = {
@@ -114,33 +102,16 @@ export type GenerationResultImage = {
   url: string
 }
 
-export type GenerationResult =
-  | {
-      success: true
-      result: {
-        prompt: string
-        generationId: string
-        images: GenerationResultImage[]
-      }
-    }
-  | {
-      success: false
-      message: string
-    }
+export type SuccessfulGenerationResult = {
+  success: true
+  result: {
+    prompt: string
+    generationId: string
+    images: GenerationResultImage[]
+  }
+}
 
 export type ImageExtension = 'jpg' | 'png' | 'jpeg' | 'webp'
-
-export const uploadInitImageFromUrlResponseSchema = z.union([
-  z.object({
-    success: z.literal(true),
-    uploadInitImageId: z.string(),
-    url: z.string(),
-  }),
-  z.object({
-    success: z.literal(false),
-    error: z.string(),
-  }),
-])
 
 export type UploadInitImageFromUrlResponse = z.infer<
   typeof uploadInitImageFromUrlResponseSchema
@@ -154,18 +125,22 @@ export type WebhookGenerationResultObject = z.infer<
   typeof webhookImageGenerationResponseSchema
 >['data']['object']
 
-export type VariationResult =
-  | {
-      success: true
-      result: {
-        method: 'UPSCALE' | 'UNZOOM'
-        originalImageId: string
-        url: string
-        variationId: string
-      }
-    }
-  | {
-      success: false
-      message: string
-    }
+export type SuccessfulVariationResult = {
+  success: true
+  result: {
+    method: 'UPSCALE' | 'UNZOOM'
+    originalImageId: string
+    url: string
+    variationId: string
+  }
+}
+
+export type FailedResult = {
+  success: false
+  message: string
+}
+
+export type VariationResult = SuccessfulVariationResult | FailedResult
 export type WebhookResponse = z.infer<typeof webhookResponseSchema>
+
+export type GenerationResult = SuccessfulGenerationResult | FailedResult
