@@ -4,26 +4,21 @@ import {
   GenerateImageQueryParams,
   GenerateImageQueryParamsSchema,
 } from './queryParamTypes.js'
-import {
-  GenerateImageResponse,
-  GenerateImageResponseSchema,
-  GenerationResult,
-  VariationResult,
-  WebhookGenerationResultObject,
-  WebhookPostProcessingResultObject,
-  WebhookResponse,
-  webhookImageGenerationResponseSchema,
-} from './responseTypes.js'
+
 import {
   GenerateImagesResponse,
   GenerationJobResponse,
-  GenerationJobResponseSchema,
+  GenerationResult,
   ImageExtension,
   ImageUploadInitResponse,
   UploadInitImageFromUrlResponse,
   UpscaleImageResponse,
   UpscaleJobResponse,
+  VariationResult,
   VariationResultResponse,
+  WebhookGenerationResultObject,
+  WebhookPostProcessingResultObject,
+  WebhookResponse,
 } from './types.js'
 import fs from 'fs'
 import path from 'path'
@@ -41,6 +36,7 @@ import axios from 'axios'
 import { default as e, default as express } from 'express'
 
 import { EventEmitter } from 'events'
+import { GenerationJobResponseSchema } from './schemas.js'
 
 class GenerationEventEmitter extends EventEmitter {}
 const generationEventEmitter = new GenerationEventEmitter()
@@ -79,7 +75,7 @@ export default class LeonardoAPI {
     } catch (error) {
       return {
         success: false,
-        error: getErrorMessage(error),
+        message: getErrorMessage(error),
       }
     }
 
@@ -102,37 +98,31 @@ export default class LeonardoAPI {
     } catch (error) {
       return {
         success: false,
-        error: getErrorMessage(error),
+        message: getErrorMessage(error),
       }
     }
 
     if ('error' in generationJobResponse)
-      return { success: false, error: generationJobResponse.error }
+      return { success: false, message: generationJobResponse.error }
     try {
       const generationId = generationJobResponse.sdGenerationJob.generationId
       const genResult = await this.waitForGenerationResult(generationId)
 
       if (genResult.success && genResult.result) {
-        genResult.result.images.forEach((image) => {
-          console.log(image.id)
-        })
         return {
           success: true,
-          generationResult: genResult.result.images.map((image) => ({
-            ...image,
-            prompt: genResult.result.prompt,
-          })),
+          result: genResult.result,
         }
       } else {
         return {
           success: false,
-          error: 'Generation timeout',
+          message: 'Generation timeout',
         }
       }
     } catch (error) {
       return {
         success: false,
-        error: getErrorMessage(error),
+        message: getErrorMessage(error),
       }
     }
   }
@@ -165,7 +155,7 @@ export default class LeonardoAPI {
         success: true,
         upscaleResult: {
           url: upscaleResult.result.url,
-          id: upscaleResult.result.id,
+          id: upscaleResult.result.variationId,
         },
       }
     } else {
@@ -283,7 +273,12 @@ export default class LeonardoAPI {
           clearTimeout(timeout)
           resolve({
             success: true,
-            result: variationResult,
+            result: {
+              method: variationResult.transformType,
+              originalImageId: variationResult.generatedImageId,
+              url: variationResult.url,
+              variationId: variationResult.id,
+            },
           })
         }
       )
@@ -306,7 +301,14 @@ export default class LeonardoAPI {
           clearTimeout(timeout)
           resolve({
             success: true,
-            result: generationResult,
+            result: {
+              prompt: generationResult.prompt,
+              generationId: generationResult.id,
+              images: generationResult.images.map((image) => ({
+                id: image.id,
+                url: image.url,
+              })),
+            },
           })
         }
       )
