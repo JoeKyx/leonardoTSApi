@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { webhookImageGenerationResponseSchema, webhookPostProcessingResponseSchema, webhookResponseSchema } from './schemas';
+import { UpscaleImageResponseSchema, uploadInitImageFromUrlResponseSchema, webhookImageGenerationResponseSchema, webhookPostProcessingResponseSchema, webhookResponseSchema } from './schemas';
 export declare const InvalidValidationResultSchema: z.ZodObject<{
     valid: z.ZodLiteral<false>;
     errors: z.ZodArray<z.ZodString, "many">;
@@ -197,83 +197,24 @@ export declare const VariationResultResponseSchema: z.ZodObject<{
     }[];
 }>;
 export type VariationResultResponse = z.infer<typeof VariationResultResponseSchema>;
-export declare const UpscaleImageResponseSchema: z.ZodUnion<[z.ZodObject<{
-    success: z.ZodLiteral<true>;
-    upscaleResult: z.ZodObject<{
-        url: z.ZodString;
-        id: z.ZodString;
-    }, "strip", z.ZodTypeAny, {
-        id: string;
-        url: string;
-    }, {
-        id: string;
-        url: string;
-    }>;
-}, "strip", z.ZodTypeAny, {
-    success: true;
-    upscaleResult: {
-        id: string;
-        url: string;
-    };
-}, {
-    success: true;
-    upscaleResult: {
-        id: string;
-        url: string;
-    };
-}>, z.ZodObject<{
-    success: z.ZodLiteral<false>;
-    error: z.ZodString;
-}, "strip", z.ZodTypeAny, {
-    error: string;
-    success: false;
-}, {
-    error: string;
-    success: false;
-}>]>;
 export type UpscaleImageResponse = z.infer<typeof UpscaleImageResponseSchema>;
 export type GenerationResultImage = {
     id: string;
     url: string;
 };
-export type GenerationResult = {
+export type SuccessfulGenerationResult = {
     success: true;
     result: {
         prompt: string;
         generationId: string;
         images: GenerationResultImage[];
     };
-} | {
-    success: false;
-    message: string;
 };
 export type ImageExtension = 'jpg' | 'png' | 'jpeg' | 'webp';
-export declare const uploadInitImageFromUrlResponseSchema: z.ZodUnion<[z.ZodObject<{
-    success: z.ZodLiteral<true>;
-    uploadInitImageId: z.ZodString;
-    url: z.ZodString;
-}, "strip", z.ZodTypeAny, {
-    url: string;
-    success: true;
-    uploadInitImageId: string;
-}, {
-    url: string;
-    success: true;
-    uploadInitImageId: string;
-}>, z.ZodObject<{
-    success: z.ZodLiteral<false>;
-    error: z.ZodString;
-}, "strip", z.ZodTypeAny, {
-    error: string;
-    success: false;
-}, {
-    error: string;
-    success: false;
-}>]>;
 export type UploadInitImageFromUrlResponse = z.infer<typeof uploadInitImageFromUrlResponseSchema>;
 export type WebhookPostProcessingResultObject = z.infer<typeof webhookPostProcessingResponseSchema>['data']['object'];
 export type WebhookGenerationResultObject = z.infer<typeof webhookImageGenerationResponseSchema>['data']['object'];
-export type VariationResult = {
+export type SuccessfulVariationResult = {
     success: true;
     result: {
         method: 'UPSCALE' | 'UNZOOM';
@@ -281,9 +222,12 @@ export type VariationResult = {
         url: string;
         variationId: string;
     };
-} | {
+};
+export type FailedResult = {
     success: false;
     message: string;
 };
+export type VariationResult = SuccessfulVariationResult | FailedResult;
 export type WebhookResponse = z.infer<typeof webhookResponseSchema>;
+export type GenerationResult = SuccessfulGenerationResult | FailedResult;
 //# sourceMappingURL=types.d.ts.map

@@ -54,27 +54,3 @@ export const VariationResultResponseSchema = z.object({
         transformType: z.union([z.literal('UPSCALE'), z.literal('UNZOOM')]),
     })),
 });
-export const UpscaleImageResponseSchema = z.union([
-    z.object({
-        success: z.literal(true),
-        upscaleResult: z.object({
-            url: z.string(),
-            id: z.string(),
-        }),
-    }),
-    z.object({
-        success: z.literal(false),
-        error: z.string(),
-    }),
-]);
-export const uploadInitImageFromUrlResponseSchema = z.union([
-    z.object({
-        success: z.literal(true),
-        uploadInitImageId: z.string(),
-        url: z.string(),
-    }),
-    z.object({
-        success: z.literal(false),
-        error: z.string(),
-    }),
-]);
