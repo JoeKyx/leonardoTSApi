@@ -1,6 +1,3 @@
-// TODO: add validation for responses (use zod)
-import { GenerateImageQueryParamsSchema, } from './queryParamTypes.js';
-import { GenerationJobResponseSchema, } from './types.js';
 import fs from 'fs';
 import path from 'path';
 import { getGlobals } from 'common-es';
@@ -11,6 +8,8 @@ import FormData from 'form-data';
 import axios from 'axios';
 import { default as express } from 'express';
 import { EventEmitter } from 'events';
+import { GenerationJobResponseSchema } from './schemas.js';
+import { GenerateImageQueryParamsSchema, } from './queryParamTypes.js';
 class GenerationEventEmitter extends EventEmitter {
 }
 const generationEventEmitter = new GenerationEventEmitter();
@@ -40,7 +39,7 @@ export default class LeonardoAPI {
         catch (error) {
             return {
                 success: false,
-                error: getErrorMessage(error),
+                message: getErrorMessage(error),
             };
         }
         const startJobUrl = `${this.baseUrl}/generations`;
@@ -60,37 +59,20 @@ export default class LeonardoAPI {
         catch (error) {
             return {
                 success: false,
-                error: getErrorMessage(error),
+                message: getErrorMessage(error),
             };
         }
         if ('error' in generationJobResponse)
-            return { success: false, error: generationJobResponse.error };
+            return { success: false, message: generationJobResponse.error };
         try {
             const generationId = generationJobResponse.sdGenerationJob.generationId;
             const genResult = await this.waitForGenerationResult(generationId);
-            if (genResult.success && genResult.result) {
-                genResult.result.images.forEach((image) => {
-                    console.log(image.id);
-                });
-                return {
-                    success: true,
-                    generationResult: genResult.result.images.map((image) => ({
-                        ...image,
-                        prompt: genResult.result.prompt,
-                    })),
-                };
-            }
-            else {
-                return {
-                    success: false,
-                    error: 'Generation timeout',
-                };
-            }
+            return genResult;
         }
         catch (error) {
             return {
                 success: false,
-                error: getErrorMessage(error),
+                message: getErrorMessage(error),
             };
         }
     }
@@ -120,7 +102,7 @@ export default class LeonardoAPI {
                 success: true,
                 upscaleResult: {
                     url: upscaleResult.result.url,
-                    id: upscaleResult.result.id,
+                    id: upscaleResult.result.variationId,
                 },
             };
         }
@@ -217,7 +199,12 @@ export default class LeonardoAPI {
                 clearTimeout(timeout);
                 resolve({
                     success: true,
-                    result: variationResult,
+                    result: {
+                        method: variationResult.transformType,
+                        originalImageId: variationResult.generatedImageId,
+                        url: variationResult.url,
+                        variationId: variationResult.id,
+                    },
                 });
             });
         });
@@ -234,7 +221,14 @@ export default class LeonardoAPI {
                 clearTimeout(timeout);
                 resolve({
                     success: true,
-                    result: generationResult,
+                    result: {
+                        prompt: generationResult.prompt,
+                        generationId: generationResult.id,
+                        images: generationResult.images.map((image) => ({
+                            id: image.id,
+                            url: image.url,
+                        })),
+                    },
                 });
             });
         });
@@ -271,5 +265,4 @@ export default class LeonardoAPI {
 //  TODO:  convert response to right format
 export * from './types.js';
 export * from './queryParamTypes.js';
-export * from './responseTypes.js';
 export * from './validators.js';

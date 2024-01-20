@@ -1,10 +1,10 @@
 import { z } from 'zod'
 import {
-  SchedulerSchema,
-  StableDiffusionVersionSchema,
-  PresetStylePhotoRealSchema,
   PresetStyleAlchemySchema,
   PresetStyleDefaultSchema,
+  PresetStylePhotoRealSchema,
+  SchedulerSchema,
+  StableDiffusionVersionSchema,
 } from './queryParamTypes'
 
 export const InvalidValidationResultSchema = z.object({
@@ -127,6 +127,44 @@ export const GenerateImageResponseSchema = z.object({
   generation_elements: z.array(z.string()),
 })
 
+export const uploadInitImageFromUrlResponseSchema = z.union([
+  z.object({
+    success: z.literal(true),
+    uploadInitImageId: z.string(),
+    url: z.string(),
+  }),
+  z.object({
+    success: z.literal(false),
+    error: z.string(),
+  }),
+])
+
+const apiKeySecretSchema = z.object({
+  webhookCallbackApiKey: z.string(),
+})
+
+export const webhookPostProcessingResponseSchema = z.object({
+  type: z.literal('post_processing.complete'),
+  object: z.string(),
+  timestamp: z.coerce.date(),
+  api_version: z.string(),
+  data: z.object({
+    object: z.object({
+      id: z.string(),
+      createdAt: z.coerce.date(),
+      updatedAt: z.coerce.date(),
+      status: z.string(),
+      url: z.string(),
+      transparent: z.boolean(),
+      generatedImageId: z.string(),
+      transformType: z.literal('UPSCALE'),
+      api: z.boolean(),
+      tokenCost: z.number(),
+      apiDollarCost: z.number(),
+      apiKey: apiKeySecretSchema,
+    }),
+  }),
+})
 export const webhookResponseStatusSchema = z.union([
   z.literal('COMPLETE'),
   z.literal('FAILED'),
@@ -145,10 +183,6 @@ export const webhookImageSchema = z.object({
   trendingScore: z.number(),
   url: z.string(),
   userId: z.string(),
-})
-
-const apiKeySecretSchema = z.object({
-  webhookCallbackApiKey: z.string(),
 })
 
 export const webhookImageGenerationResponseSchema = z.object({
@@ -173,42 +207,7 @@ export const webhookImageGenerationResponseSchema = z.object({
   }),
 })
 
-export const webhookPostProcessingResponseSchema = z.object({
-  type: z.literal('post_processing.complete'),
-  object: z.string(),
-  timestamp: z.coerce.date(),
-  api_version: z.string(),
-  data: z.object({
-    object: z.object({
-      id: z.string(),
-      createdAt: z.coerce.date(),
-      updatedAt: z.coerce.date(),
-      generatedImageId: z.string(),
-      status: z.string(),
-      url: z.string(),
-      transparent: z.boolean(),
-      transformType: z.literal('UPSCALE'),
-      api: z.boolean(),
-      tokenCost: z.number(),
-      apiDollarCost: z.number(),
-      apiKey: apiKeySecretSchema,
-    }),
-  }),
-})
-
 export const webhookResponseSchema = z.union([
   webhookImageGenerationResponseSchema,
   webhookPostProcessingResponseSchema,
-])
-
-export const uploadInitImageFromUrlResponseSchema = z.union([
-  z.object({
-    success: z.literal(true),
-    uploadInitImageId: z.string(),
-    url: z.string(),
-  }),
-  z.object({
-    success: z.literal(false),
-    error: z.string(),
-  }),
 ])

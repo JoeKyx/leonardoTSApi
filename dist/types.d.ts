@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ResponseImage } from './responseTypes.js';
+import { webhookImageGenerationResponseSchema, webhookPostProcessingResponseSchema, webhookResponseSchema } from './schemas';
 export declare const InvalidValidationResultSchema: z.ZodObject<{
     valid: z.ZodLiteral<false>;
     errors: z.ZodArray<z.ZodString, "many">;
@@ -232,14 +232,20 @@ export declare const UpscaleImageResponseSchema: z.ZodUnion<[z.ZodObject<{
     success: false;
 }>]>;
 export type UpscaleImageResponse = z.infer<typeof UpscaleImageResponseSchema>;
-export type GenerateImagesResponse = {
+export type GenerationResultImage = {
+    id: string;
+    url: string;
+};
+export type GenerationResult = {
     success: true;
-    generationResult: (ResponseImage & {
+    result: {
         prompt: string;
-    })[];
+        generationId: string;
+        images: GenerationResultImage[];
+    };
 } | {
     success: false;
-    error: string;
+    message: string;
 };
 export type ImageExtension = 'jpg' | 'png' | 'jpeg' | 'webp';
 export declare const uploadInitImageFromUrlResponseSchema: z.ZodUnion<[z.ZodObject<{
@@ -265,4 +271,19 @@ export declare const uploadInitImageFromUrlResponseSchema: z.ZodUnion<[z.ZodObje
     success: false;
 }>]>;
 export type UploadInitImageFromUrlResponse = z.infer<typeof uploadInitImageFromUrlResponseSchema>;
+export type WebhookPostProcessingResultObject = z.infer<typeof webhookPostProcessingResponseSchema>['data']['object'];
+export type WebhookGenerationResultObject = z.infer<typeof webhookImageGenerationResponseSchema>['data']['object'];
+export type VariationResult = {
+    success: true;
+    result: {
+        method: 'UPSCALE' | 'UNZOOM';
+        originalImageId: string;
+        url: string;
+        variationId: string;
+    };
+} | {
+    success: false;
+    message: string;
+};
+export type WebhookResponse = z.infer<typeof webhookResponseSchema>;
 //# sourceMappingURL=types.d.ts.map

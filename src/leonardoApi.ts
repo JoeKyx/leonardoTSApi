@@ -1,12 +1,4 @@
-// TODO: add validation for responses (use zod)
-
 import {
-  GenerateImageQueryParams,
-  GenerateImageQueryParamsSchema,
-} from './queryParamTypes.js'
-
-import {
-  GenerateImagesResponse,
   GenerationJobResponse,
   GenerationResult,
   ImageExtension,
@@ -37,6 +29,10 @@ import { default as e, default as express } from 'express'
 
 import { EventEmitter } from 'events'
 import { GenerationJobResponseSchema } from './schemas.js'
+import {
+  GenerateImageQueryParams,
+  GenerateImageQueryParamsSchema,
+} from './queryParamTypes.js'
 
 class GenerationEventEmitter extends EventEmitter {}
 const generationEventEmitter = new GenerationEventEmitter()
@@ -69,7 +65,7 @@ export default class LeonardoAPI {
 
   public async generateImages(
     params: GenerateImageQueryParams
-  ): Promise<GenerateImagesResponse> {
+  ): Promise<GenerationResult> {
     try {
       GenerateImageQueryParamsSchema.parse(params)
     } catch (error) {
@@ -107,18 +103,7 @@ export default class LeonardoAPI {
     try {
       const generationId = generationJobResponse.sdGenerationJob.generationId
       const genResult = await this.waitForGenerationResult(generationId)
-
-      if (genResult.success && genResult.result) {
-        return {
-          success: true,
-          result: genResult.result,
-        }
-      } else {
-        return {
-          success: false,
-          message: 'Generation timeout',
-        }
-      }
+      return genResult
     } catch (error) {
       return {
         success: false,
@@ -356,5 +341,4 @@ export default class LeonardoAPI {
 
 export * from './types.js'
 export * from './queryParamTypes.js'
-export * from './responseTypes.js'
 export * from './validators.js'
