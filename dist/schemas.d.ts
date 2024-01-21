@@ -383,7 +383,7 @@ export declare const webhookPostProcessingResponseSchema: z.ZodObject<{
             transformType: z.ZodLiteral<"UPSCALE">;
             api: z.ZodBoolean;
             tokenCost: z.ZodNumber;
-            apiDollarCost: z.ZodNumber;
+            apiDollarCost: z.ZodString;
             apiKey: z.ZodObject<{
                 webhookCallbackApiKey: z.ZodString;
             }, "strip", z.ZodTypeAny, {
@@ -402,7 +402,7 @@ export declare const webhookPostProcessingResponseSchema: z.ZodObject<{
             generatedImageId: string;
             api: boolean;
             tokenCost: number;
-            apiDollarCost: number;
+            apiDollarCost: string;
             apiKey: {
                 webhookCallbackApiKey: string;
             };
@@ -417,7 +417,7 @@ export declare const webhookPostProcessingResponseSchema: z.ZodObject<{
             generatedImageId: string;
             api: boolean;
             tokenCost: number;
-            apiDollarCost: number;
+            apiDollarCost: string;
             apiKey: {
                 webhookCallbackApiKey: string;
             };
@@ -434,7 +434,7 @@ export declare const webhookPostProcessingResponseSchema: z.ZodObject<{
             generatedImageId: string;
             api: boolean;
             tokenCost: number;
-            apiDollarCost: number;
+            apiDollarCost: string;
             apiKey: {
                 webhookCallbackApiKey: string;
             };
@@ -451,7 +451,7 @@ export declare const webhookPostProcessingResponseSchema: z.ZodObject<{
             generatedImageId: string;
             api: boolean;
             tokenCost: number;
-            apiDollarCost: number;
+            apiDollarCost: string;
             apiKey: {
                 webhookCallbackApiKey: string;
             };
@@ -472,7 +472,7 @@ export declare const webhookPostProcessingResponseSchema: z.ZodObject<{
             generatedImageId: string;
             api: boolean;
             tokenCost: number;
-            apiDollarCost: number;
+            apiDollarCost: string;
             apiKey: {
                 webhookCallbackApiKey: string;
             };
@@ -495,7 +495,7 @@ export declare const webhookPostProcessingResponseSchema: z.ZodObject<{
             generatedImageId: string;
             api: boolean;
             tokenCost: number;
-            apiDollarCost: number;
+            apiDollarCost: string;
             apiKey: {
                 webhookCallbackApiKey: string;
             };
@@ -1057,7 +1057,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
             transformType: z.ZodLiteral<"UPSCALE">;
             api: z.ZodBoolean;
             tokenCost: z.ZodNumber;
-            apiDollarCost: z.ZodNumber;
+            apiDollarCost: z.ZodString;
             apiKey: z.ZodObject<{
                 webhookCallbackApiKey: z.ZodString;
             }, "strip", z.ZodTypeAny, {
@@ -1076,7 +1076,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
             generatedImageId: string;
             api: boolean;
             tokenCost: number;
-            apiDollarCost: number;
+            apiDollarCost: string;
             apiKey: {
                 webhookCallbackApiKey: string;
             };
@@ -1091,7 +1091,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
             generatedImageId: string;
             api: boolean;
             tokenCost: number;
-            apiDollarCost: number;
+            apiDollarCost: string;
             apiKey: {
                 webhookCallbackApiKey: string;
             };
@@ -1108,7 +1108,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
             generatedImageId: string;
             api: boolean;
             tokenCost: number;
-            apiDollarCost: number;
+            apiDollarCost: string;
             apiKey: {
                 webhookCallbackApiKey: string;
             };
@@ -1125,7 +1125,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
             generatedImageId: string;
             api: boolean;
             tokenCost: number;
-            apiDollarCost: number;
+            apiDollarCost: string;
             apiKey: {
                 webhookCallbackApiKey: string;
             };
@@ -1146,7 +1146,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
             generatedImageId: string;
             api: boolean;
             tokenCost: number;
-            apiDollarCost: number;
+            apiDollarCost: string;
             apiKey: {
                 webhookCallbackApiKey: string;
             };
@@ -1169,7 +1169,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
             generatedImageId: string;
             api: boolean;
             tokenCost: number;
-            apiDollarCost: number;
+            apiDollarCost: string;
             apiKey: {
                 webhookCallbackApiKey: string;
             };

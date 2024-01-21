@@ -62,6 +62,9 @@ export default class LeonardoAPI {
     const app = express()
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
+    app.get('/webhook-endpoint', (req, res) => {
+      res.send('Leonardo API')
+    })
     app.post('/webhook-endpoint', this.webhookHandler)
     app.get('/', (req, res) => {
       res.send('Leonardo API')

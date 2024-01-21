@@ -160,7 +160,7 @@ export const webhookPostProcessingResponseSchema = z.object({
       transformType: z.literal('UPSCALE'),
       api: z.boolean(),
       tokenCost: z.number(),
-      apiDollarCost: z.number(),
+      apiDollarCost: z.string(),
       apiKey: apiKeySecretSchema,
     }),
   }),
