@@ -32,7 +32,7 @@ import { EventEmitter } from 'events'
 import {
   GenerationJobResponseSchema,
   pollingImageGenerationResponseSchema,
-  pollingVariateImageResponseSchema,
+  pollingVariantImageResponseSchema,
   webhookResponseSchema,
 } from './schemas.js'
 import {
@@ -68,6 +68,8 @@ export default class LeonardoAPI {
     this.generationTimeout = generationTimeout
     this.webhookApiKey = webhookApiKey
     this.useWebhook = useWebhook
+
+    const portToUse = port || 3050
     if (useWebhook) {
       const app = express()
       app.use(express.json())
@@ -79,8 +81,8 @@ export default class LeonardoAPI {
       app.get('/', (req, res) => {
         res.send('Leonardo API')
       })
-      app.listen(port, () => {
-        console.log('Server running on port ' + port)
+      app.listen(portToUse, () => {
+        console.log('Server running on port ' + portToUse)
       })
     }
   }
@@ -365,10 +367,13 @@ export default class LeonardoAPI {
     })
     const variationResultJson = await response.json()
     const pollingImageResponse =
-      pollingVariateImageResponseSchema.safeParse(variationResultJson)
-    if (pollingImageResponse.success) {
+      pollingVariantImageResponseSchema.safeParse(variationResultJson)
+    if (
+      pollingImageResponse.success &&
+      pollingImageResponse.data.generated_image_variation_generic.length > 0
+    ) {
       const variationResult =
-        pollingImageResponse.data.generated_image_variation_generic
+        pollingImageResponse.data.generated_image_variation_generic[0]
       if (variationResult.status == 'COMPLETE') {
         return {
           success: true,
@@ -389,10 +394,16 @@ export default class LeonardoAPI {
           message: 'variation failed (Code 1)',
         }
       }
-    } else {
+    } else if (!pollingImageResponse.success) {
+      console.log(pollingImageResponse.error)
       return {
         success: false,
         message: 'variation failed (Code 0)',
+      }
+    } else {
+      return {
+        success: false,
+        message: 'variation failed (Code 2)',
       }
     }
   }
@@ -457,6 +468,7 @@ export default class LeonardoAPI {
         }
       }
     } else {
+      console.log(pollingImageResponse.error)
       return {
         success: false,
         message: 'generation failed (Code 0)',

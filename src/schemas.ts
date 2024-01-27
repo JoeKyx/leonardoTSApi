@@ -220,7 +220,7 @@ export const pollingImageGenerationResponseSchema = z.object({
       })
     ),
     modelId: z.string().nullable(),
-    motion: z.boolean(),
+    motion: z.boolean().nullable(),
     motionModel: z.string().nullable(),
     motionStrength: z.number().nullable(),
     prompt: z.string(),
@@ -229,9 +229,9 @@ export const pollingImageGenerationResponseSchema = z.object({
     imageToVideo: z.boolean().nullable(),
     imageWidth: z.number(),
     inferenceSteps: z.number(),
-    seed: z.number(),
+    seed: z.number().nullable(),
     public: z.boolean(),
-    schedule: SchedulerSchema,
+    scheduler: SchedulerSchema,
     sdVersion: StableDiffusionVersionSchema,
     status: z.enum(['COMPLETE', 'FAILED', 'PENDING']),
     id: z.string(),
@@ -241,14 +241,24 @@ export const pollingImageGenerationResponseSchema = z.object({
   }),
 })
 
-export const pollingVariateImageResponseSchema = z.object({
-  generated_image_variation_generic: z.object({
-    url: z.string(),
-    status: z.enum(['COMPLETE', 'FAILED', 'PENDING']),
-    id: z.string(),
-    createdAt: z.string(),
-    transformType: z.union([z.literal('UPSCALE'), z.literal('UNZOOM')]),
-  }),
+export const pollingVariantImageResponseSchema = z.object({
+  generated_image_variation_generic: z.array(
+    z.discriminatedUnion('status', [
+      z.object({
+        url: z.string(),
+        status: z.literal('COMPLETE'),
+        id: z.string(),
+        createdAt: z.string(),
+        transformType: z.union([z.literal('UPSCALE'), z.literal('UNZOOM')]),
+      }),
+      z.object({
+        status: z.literal('FAILED'),
+      }),
+      z.object({
+        status: z.literal('PENDING'),
+      }),
+    ])
+  ),
 })
 
 export const webhookResponseSchema = z.union([
