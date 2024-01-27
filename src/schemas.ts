@@ -6,6 +6,7 @@ import {
   SchedulerSchema,
   StableDiffusionVersionSchema,
 } from './queryParamTypes.js'
+import { SuccessfulVariationResult } from './types.js'
 
 export const InvalidValidationResultSchema = z.object({
   valid: z.literal(false),
@@ -204,6 +205,49 @@ export const webhookImageGenerationResponseSchema = z.object({
       images: z.array(webhookImageSchema),
       prompt: z.string(),
     }),
+  }),
+})
+
+export const pollingImageGenerationResponseSchema = z.object({
+  generations_by_pk: z.object({
+    generated_images: z.array(
+      z.object({
+        url: z.string(),
+        nsfw: z.boolean(),
+        id: z.string(),
+        likeCount: z.number(),
+        motionMP4URL: z.string().nullable(),
+      })
+    ),
+    modelId: z.string().nullable(),
+    motion: z.boolean(),
+    motionModel: z.string().nullable(),
+    motionStrength: z.number().nullable(),
+    prompt: z.string(),
+    negativePrompt: z.string().nullable(),
+    imageHeight: z.number(),
+    imageToVideo: z.boolean().nullable(),
+    imageWidth: z.number(),
+    inferenceSteps: z.number(),
+    seed: z.number(),
+    public: z.boolean(),
+    schedule: SchedulerSchema,
+    sdVersion: StableDiffusionVersionSchema,
+    status: z.enum(['COMPLETE', 'FAILED', 'PENDING']),
+    id: z.string(),
+    createdAt: z.coerce.date(),
+    promptMagic: z.boolean(),
+    photoReal: z.boolean(),
+  }),
+})
+
+export const pollingVariateImageResponseSchema = z.object({
+  generated_image_variation_generic: z.object({
+    url: z.string(),
+    status: z.enum(['COMPLETE', 'FAILED', 'PENDING']),
+    id: z.string(),
+    createdAt: z.string(),
+    transformType: z.union([z.literal('UPSCALE'), z.literal('UNZOOM')]),
   }),
 })
 
