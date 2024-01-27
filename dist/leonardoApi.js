@@ -8,7 +8,7 @@ import FormData from 'form-data';
 import axios from 'axios';
 import { default as express } from 'express';
 import { EventEmitter } from 'events';
-import { GenerationJobResponseSchema, webhookResponseSchema, } from './schemas.js';
+import { GenerationJobResponseSchema, pollingImageGenerationResponseSchema, pollingVariantImageResponseSchema, webhookResponseSchema, } from './schemas.js';
 import { GenerateImageQueryParamsSchema, } from './queryParamTypes.js';
 class GenerationEventEmitter extends EventEmitter {
 }
@@ -22,23 +22,31 @@ export default class LeonardoAPI {
     baseCDNUrl = 'https://cdn.leonardo.ai/';
     generationTimeout;
     webhookApiKey;
-    constructor(apiKey, webhookApiKey, generationTimeout = 120000, port = 8080) {
+    useWebhook = false;
+    constructor(apiKey, useWebhook = false, generationTimeout = 120000, webhookApiKey, port) {
+        if (useWebhook && !webhookApiKey) {
+            throw new Error('Webhook api key is required');
+        }
         this.apiKey = apiKey;
         this.generationTimeout = generationTimeout;
         this.webhookApiKey = webhookApiKey;
-        const app = express();
-        app.use(express.json());
-        app.use(express.urlencoded({ extended: true }));
-        app.get('/webhook-endpoint', (req, res) => {
-            res.send('Leonardo API');
-        });
-        app.post('/webhook-endpoint', this.webhookHandler);
-        app.get('/', (req, res) => {
-            res.send('Leonardo API');
-        });
-        app.listen(port, () => {
-            console.log('Server running on port ' + port);
-        });
+        this.useWebhook = useWebhook;
+        const portToUse = port || 3050;
+        if (useWebhook) {
+            const app = express();
+            app.use(express.json());
+            app.use(express.urlencoded({ extended: true }));
+            app.get('/webhook-endpoint', (req, res) => {
+                res.send('Leonardo API');
+            });
+            app.post('/webhook-endpoint', this.webhookHandler);
+            app.get('/', (req, res) => {
+                res.send('Leonardo API');
+            });
+            app.listen(portToUse, () => {
+                console.log('Server running on port ' + portToUse);
+            });
+        }
     }
     async generateImages(params) {
         try {
@@ -203,18 +211,23 @@ export default class LeonardoAPI {
                     message: 'Upscale timeout',
                 });
             }, this.generationTimeout);
-            upscaleEventEmitter.once(`upscale-complete-${variationId}`, (variationResult) => {
-                clearTimeout(timeout);
-                resolve({
-                    success: true,
-                    result: {
-                        method: variationResult.transformType,
-                        originalImageId: variationResult.generatedImageId,
-                        url: variationResult.url,
-                        variationId: variationResult.id,
-                    },
+            if (!this.useWebhook || !this.webhookApiKey) {
+                console.log('Using polling');
+                this.pollVariationResult(variationId, resolve, reject, timeout);
+            }
+            else {
+                upscaleEventEmitter.once(`upscale-complete-${variationId}`, (variationResult) => {
+                    clearTimeout(timeout);
+                    resolve({
+                        success: true,
+                        result: {
+                            method: variationResult.transformType,
+                            url: variationResult.url,
+                            variationId: variationResult.id,
+                        },
+                    });
                 });
-            });
+            }
         });
     }
     async waitForGenerationResult(generationId) {
@@ -226,21 +239,157 @@ export default class LeonardoAPI {
                 });
             }, this.generationTimeout);
             console.log('Waiting for generation result ' + generationId + '...');
-            generationEventEmitter.once(`generation-complete-${generationId}`, (generationResult) => {
-                clearTimeout(timeout);
-                resolve({
+            if (!this.useWebhook || !this.webhookApiKey) {
+                console.log('Using polling');
+                this.pollGenerationResult(generationId, resolve, reject, timeout);
+            }
+            else {
+                generationEventEmitter.once(`generation-complete-${generationId}`, (generationResult) => {
+                    clearTimeout(timeout);
+                    resolve({
+                        success: true,
+                        result: {
+                            prompt: generationResult.prompt,
+                            generationId: generationResult.id,
+                            images: generationResult.images.map((image) => ({
+                                id: image.id,
+                                url: image.url,
+                            })),
+                        },
+                    });
+                });
+            }
+        });
+    }
+    async pollVariationResult(variationId, resolve, reject, timeout) {
+        const variationResult = await this.getVariationResult(variationId);
+        if (variationResult.success) {
+            clearTimeout(timeout);
+            resolve(variationResult);
+        }
+        else if (variationResult.message == 'PENDING') {
+            setTimeout(() => {
+                this.pollVariationResult(variationId, resolve, reject, timeout);
+            }, 1000);
+        }
+        else {
+            clearTimeout(timeout);
+            reject(variationResult);
+        }
+    }
+    async getVariationResult(variationId) {
+        const variationResultUrl = `${this.baseUrl}/variations/${variationId}`;
+        const response = await fetch(variationResultUrl, {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                authorization: `Bearer ${this.apiKey}`,
+            },
+        });
+        const variationResultJson = await response.json();
+        const pollingImageResponse = pollingVariantImageResponseSchema.safeParse(variationResultJson);
+        if (pollingImageResponse.success &&
+            pollingImageResponse.data.generated_image_variation_generic.length > 0) {
+            const variationResult = pollingImageResponse.data.generated_image_variation_generic[0];
+            if (variationResult.status == 'COMPLETE') {
+                return {
+                    success: true,
+                    result: {
+                        method: variationResult.transformType,
+                        url: variationResult.url,
+                        variationId: variationResult.id,
+                    },
+                };
+            }
+            else if (variationResult.status == 'PENDING') {
+                return {
+                    success: false,
+                    message: variationResult.status,
+                };
+            }
+            else {
+                return {
+                    success: false,
+                    message: 'variation failed (Code 1)',
+                };
+            }
+        }
+        else if (!pollingImageResponse.success) {
+            console.log(pollingImageResponse.error);
+            return {
+                success: false,
+                message: 'variation failed (Code 0)',
+            };
+        }
+        else {
+            return {
+                success: false,
+                message: 'variation failed (Code 2)',
+            };
+        }
+    }
+    async pollGenerationResult(generationId, resolve, reject, timeout) {
+        const generationResult = await this.getGenerationResult(generationId);
+        if (generationResult.success) {
+            clearTimeout(timeout);
+            resolve(generationResult);
+        }
+        else if (generationResult.message == 'PENDING') {
+            setTimeout(() => {
+                this.pollGenerationResult(generationId, resolve, reject, timeout);
+            }, 1000);
+        }
+        else {
+            clearTimeout(timeout);
+            reject(generationResult);
+        }
+    }
+    async getGenerationResult(generationId) {
+        const generationResultUrl = `${this.baseUrl}/generations/${generationId}`;
+        const response = await fetch(generationResultUrl, {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                authorization: `Bearer ${this.apiKey}`,
+            },
+        });
+        const generationResultJson = await response.json();
+        const pollingImageResponse = pollingImageGenerationResponseSchema.safeParse(generationResultJson);
+        if (pollingImageResponse.success) {
+            const generationResult = pollingImageResponse.data.generations_by_pk;
+            if (generationResult.status == 'COMPLETE') {
+                return {
                     success: true,
                     result: {
                         prompt: generationResult.prompt,
                         generationId: generationResult.id,
-                        images: generationResult.images.map((image) => ({
+                        images: generationResult.generated_images.map((image) => ({
                             id: image.id,
                             url: image.url,
                         })),
                     },
-                });
-            });
-        });
+                };
+            }
+            else if (generationResult.status == 'PENDING') {
+                return {
+                    success: false,
+                    message: generationResult.status,
+                };
+            }
+            else {
+                return {
+                    success: false,
+                    message: 'generation failed (Code 1)',
+                };
+            }
+        }
+        else {
+            console.log(pollingImageResponse.error);
+            return {
+                success: false,
+                message: 'generation failed (Code 0)',
+            };
+        }
     }
     webhookHandler = async (req, res) => {
         console.log('Webhook received');

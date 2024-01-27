@@ -6,7 +6,8 @@ export default class LeonardoAPI {
     private baseCDNUrl;
     private generationTimeout;
     private webhookApiKey;
-    constructor(apiKey: string, webhookApiKey: string, generationTimeout?: number, port?: number);
+    private useWebhook;
+    constructor(apiKey: string, useWebhook?: boolean, generationTimeout?: number, webhookApiKey?: string, port?: number);
     generateImages(params: GenerateImageQueryParams): Promise<GenerationResult>;
     upscaleImage(imageId: string): Promise<UpscaleImageResponse>;
     uploadInitImageFromUrl: (url: string, fileExtension: ImageExtension) => Promise<UploadInitImageFromUrlResponse>;
@@ -14,6 +15,10 @@ export default class LeonardoAPI {
     private uploadImageFromUrl;
     private waitForVariationResult;
     private waitForGenerationResult;
+    private pollVariationResult;
+    private getVariationResult;
+    private pollGenerationResult;
+    private getGenerationResult;
     private webhookHandler;
 }
 export * from './types.js';

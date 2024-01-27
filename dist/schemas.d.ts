@@ -793,6 +793,217 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
     timestamp: Date;
     api_version: string;
 }>;
+export declare const pollingImageGenerationResponseSchema: z.ZodObject<{
+    generations_by_pk: z.ZodObject<{
+        generated_images: z.ZodArray<z.ZodObject<{
+            url: z.ZodString;
+            nsfw: z.ZodBoolean;
+            id: z.ZodString;
+            likeCount: z.ZodNumber;
+            motionMP4URL: z.ZodNullable<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            id: string;
+            url: string;
+            nsfw: boolean;
+            likeCount: number;
+            motionMP4URL: string | null;
+        }, {
+            id: string;
+            url: string;
+            nsfw: boolean;
+            likeCount: number;
+            motionMP4URL: string | null;
+        }>, "many">;
+        modelId: z.ZodNullable<z.ZodString>;
+        motion: z.ZodNullable<z.ZodBoolean>;
+        motionModel: z.ZodNullable<z.ZodString>;
+        motionStrength: z.ZodNullable<z.ZodNumber>;
+        prompt: z.ZodString;
+        negativePrompt: z.ZodNullable<z.ZodString>;
+        imageHeight: z.ZodNumber;
+        imageToVideo: z.ZodNullable<z.ZodBoolean>;
+        imageWidth: z.ZodNumber;
+        inferenceSteps: z.ZodNumber;
+        seed: z.ZodNullable<z.ZodNumber>;
+        public: z.ZodBoolean;
+        scheduler: z.ZodUnion<[z.ZodLiteral<"KLMS">, z.ZodLiteral<"EULER_ANCESTRAL_DISCRETE">, z.ZodLiteral<"EULER_DISCRETE">, z.ZodLiteral<"DDIM">, z.ZodLiteral<"DPM_SOLVER">, z.ZodLiteral<"PNDM">, z.ZodLiteral<"LEONARDO">]>;
+        sdVersion: z.ZodString;
+        status: z.ZodEnum<["COMPLETE", "FAILED", "PENDING"]>;
+        id: z.ZodString;
+        createdAt: z.ZodDate;
+        promptMagic: z.ZodBoolean;
+        photoReal: z.ZodBoolean;
+    }, "strip", z.ZodTypeAny, {
+        id: string;
+        public: boolean;
+        prompt: string;
+        status: "COMPLETE" | "FAILED" | "PENDING";
+        modelId: string | null;
+        promptMagic: boolean;
+        scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM";
+        seed: number | null;
+        photoReal: boolean;
+        createdAt: Date;
+        generated_images: {
+            id: string;
+            url: string;
+            nsfw: boolean;
+            likeCount: number;
+            motionMP4URL: string | null;
+        }[];
+        negativePrompt: string | null;
+        imageHeight: number;
+        imageWidth: number;
+        inferenceSteps: number;
+        sdVersion: string;
+        motion: boolean | null;
+        motionModel: string | null;
+        motionStrength: number | null;
+        imageToVideo: boolean | null;
+    }, {
+        id: string;
+        public: boolean;
+        prompt: string;
+        status: "COMPLETE" | "FAILED" | "PENDING";
+        modelId: string | null;
+        promptMagic: boolean;
+        scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM";
+        seed: number | null;
+        photoReal: boolean;
+        createdAt: Date;
+        generated_images: {
+            id: string;
+            url: string;
+            nsfw: boolean;
+            likeCount: number;
+            motionMP4URL: string | null;
+        }[];
+        negativePrompt: string | null;
+        imageHeight: number;
+        imageWidth: number;
+        inferenceSteps: number;
+        sdVersion: string;
+        motion: boolean | null;
+        motionModel: string | null;
+        motionStrength: number | null;
+        imageToVideo: boolean | null;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    generations_by_pk: {
+        id: string;
+        public: boolean;
+        prompt: string;
+        status: "COMPLETE" | "FAILED" | "PENDING";
+        modelId: string | null;
+        promptMagic: boolean;
+        scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM";
+        seed: number | null;
+        photoReal: boolean;
+        createdAt: Date;
+        generated_images: {
+            id: string;
+            url: string;
+            nsfw: boolean;
+            likeCount: number;
+            motionMP4URL: string | null;
+        }[];
+        negativePrompt: string | null;
+        imageHeight: number;
+        imageWidth: number;
+        inferenceSteps: number;
+        sdVersion: string;
+        motion: boolean | null;
+        motionModel: string | null;
+        motionStrength: number | null;
+        imageToVideo: boolean | null;
+    };
+}, {
+    generations_by_pk: {
+        id: string;
+        public: boolean;
+        prompt: string;
+        status: "COMPLETE" | "FAILED" | "PENDING";
+        modelId: string | null;
+        promptMagic: boolean;
+        scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM";
+        seed: number | null;
+        photoReal: boolean;
+        createdAt: Date;
+        generated_images: {
+            id: string;
+            url: string;
+            nsfw: boolean;
+            likeCount: number;
+            motionMP4URL: string | null;
+        }[];
+        negativePrompt: string | null;
+        imageHeight: number;
+        imageWidth: number;
+        inferenceSteps: number;
+        sdVersion: string;
+        motion: boolean | null;
+        motionModel: string | null;
+        motionStrength: number | null;
+        imageToVideo: boolean | null;
+    };
+}>;
+export declare const pollingVariantImageResponseSchema: z.ZodObject<{
+    generated_image_variation_generic: z.ZodArray<z.ZodDiscriminatedUnion<"status", [z.ZodObject<{
+        url: z.ZodString;
+        status: z.ZodLiteral<"COMPLETE">;
+        id: z.ZodString;
+        createdAt: z.ZodString;
+        transformType: z.ZodUnion<[z.ZodLiteral<"UPSCALE">, z.ZodLiteral<"UNZOOM">]>;
+    }, "strip", z.ZodTypeAny, {
+        id: string;
+        url: string;
+        status: "COMPLETE";
+        createdAt: string;
+        transformType: "UPSCALE" | "UNZOOM";
+    }, {
+        id: string;
+        url: string;
+        status: "COMPLETE";
+        createdAt: string;
+        transformType: "UPSCALE" | "UNZOOM";
+    }>, z.ZodObject<{
+        status: z.ZodLiteral<"FAILED">;
+    }, "strip", z.ZodTypeAny, {
+        status: "FAILED";
+    }, {
+        status: "FAILED";
+    }>, z.ZodObject<{
+        status: z.ZodLiteral<"PENDING">;
+    }, "strip", z.ZodTypeAny, {
+        status: "PENDING";
+    }, {
+        status: "PENDING";
+    }>]>, "many">;
+}, "strip", z.ZodTypeAny, {
+    generated_image_variation_generic: ({
+        id: string;
+        url: string;
+        status: "COMPLETE";
+        createdAt: string;
+        transformType: "UPSCALE" | "UNZOOM";
+    } | {
+        status: "FAILED";
+    } | {
+        status: "PENDING";
+    })[];
+}, {
+    generated_image_variation_generic: ({
+        id: string;
+        url: string;
+        status: "COMPLETE";
+        createdAt: string;
+        transformType: "UPSCALE" | "UNZOOM";
+    } | {
+        status: "FAILED";
+    } | {
+        status: "PENDING";
+    })[];
+}>;
 export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
     type: z.ZodLiteral<"image_generation.complete">;
     object: z.ZodString;

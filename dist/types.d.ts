@@ -230,4 +230,10 @@ export type FailedResult = {
 export type VariationResult = SuccessfulVariationResult | FailedResult;
 export type WebhookResponse = z.infer<typeof webhookResponseSchema>;
 export type GenerationResult = SuccessfulGenerationResult | FailedResult;
+type ResultWithoutOriginalImageId = Omit<SuccessfulVariationResult['result'], 'originalImageId'>;
+export type SuccessfulVariationResultWithoutOriginalImageId = Omit<SuccessfulVariationResult, 'result'> & {
+    result: ResultWithoutOriginalImageId;
+};
+export type PollingVariationResult = SuccessfulVariationResultWithoutOriginalImageId | FailedResult;
+export {};
 //# sourceMappingURL=types.d.ts.map
