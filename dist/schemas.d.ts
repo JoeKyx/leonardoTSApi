@@ -42,6 +42,7 @@ export declare const ApiErrorSchema: z.ZodObject<{
     code: string;
     error: string;
 }>;
+export declare const ImageExtensionSchema: z.ZodUnion<[z.ZodLiteral<"jpg">, z.ZodLiteral<"jpeg">, z.ZodLiteral<"png">, z.ZodLiteral<"webp">]>;
 export declare const ImageUploadInitResponseSchema: z.ZodObject<{
     uploadInitImage: z.ZodObject<{
         id: z.ZodString;
@@ -367,7 +368,7 @@ export declare const uploadInitImageFromUrlResponseSchema: z.ZodUnion<[z.ZodObje
     success: false;
 }>]>;
 export declare const webhookPostProcessingResponseSchema: z.ZodObject<{
-    type: z.ZodLiteral<"post_processing.complete">;
+    type: z.ZodUnion<[z.ZodLiteral<"post_processing.complete">, z.ZodLiteral<"post_processing.completed">]>;
     object: z.ZodString;
     timestamp: z.ZodDate;
     api_version: z.ZodString;
@@ -459,7 +460,7 @@ export declare const webhookPostProcessingResponseSchema: z.ZodObject<{
     }>;
 }, "strip", z.ZodTypeAny, {
     object: string;
-    type: "post_processing.complete";
+    type: "post_processing.complete" | "post_processing.completed";
     data: {
         object: {
             transparent: boolean;
@@ -482,7 +483,7 @@ export declare const webhookPostProcessingResponseSchema: z.ZodObject<{
     api_version: string;
 }, {
     object: string;
-    type: "post_processing.complete";
+    type: "post_processing.complete" | "post_processing.completed";
     data: {
         object: {
             transparent: boolean;
@@ -1252,7 +1253,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
     timestamp: Date;
     api_version: string;
 }>, z.ZodObject<{
-    type: z.ZodLiteral<"post_processing.complete">;
+    type: z.ZodUnion<[z.ZodLiteral<"post_processing.complete">, z.ZodLiteral<"post_processing.completed">]>;
     object: z.ZodString;
     timestamp: z.ZodDate;
     api_version: z.ZodString;
@@ -1344,7 +1345,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
     }>;
 }, "strip", z.ZodTypeAny, {
     object: string;
-    type: "post_processing.complete";
+    type: "post_processing.complete" | "post_processing.completed";
     data: {
         object: {
             transparent: boolean;
@@ -1367,7 +1368,7 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
     api_version: string;
 }, {
     object: string;
-    type: "post_processing.complete";
+    type: "post_processing.complete" | "post_processing.completed";
     data: {
         object: {
             transparent: boolean;

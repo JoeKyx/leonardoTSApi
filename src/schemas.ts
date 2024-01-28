@@ -5,8 +5,7 @@ import {
   PresetStylePhotoRealSchema,
   SchedulerSchema,
   StableDiffusionVersionSchema,
-} from './queryParamTypes.js'
-import { SuccessfulVariationResult } from './types.js'
+} from './queryParamTypes'
 
 export const InvalidValidationResultSchema = z.object({
   valid: z.literal(false),
@@ -26,6 +25,13 @@ export const ApiErrorSchema = z.object({
   error: z.string(),
   code: z.string(),
 })
+
+export const ImageExtensionSchema = z.union([
+  z.literal('jpg'),
+  z.literal('jpeg'),
+  z.literal('png'),
+  z.literal('webp'),
+])
 
 export const ImageUploadInitResponseSchema = z.object({
   uploadInitImage: z.object({
@@ -145,7 +151,10 @@ const apiKeySecretSchema = z.object({
 })
 
 export const webhookPostProcessingResponseSchema = z.object({
-  type: z.literal('post_processing.complete'),
+  type: z.union([
+    z.literal('post_processing.complete'),
+    z.literal('post_processing.completed'),
+  ]),
   object: z.string(),
   timestamp: z.coerce.date(),
   api_version: z.string(),

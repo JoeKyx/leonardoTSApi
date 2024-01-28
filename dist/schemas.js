@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PresetStyleAlchemySchema, PresetStyleDefaultSchema, PresetStylePhotoRealSchema, SchedulerSchema, StableDiffusionVersionSchema, } from './queryParamTypes.js';
+import { PresetStyleAlchemySchema, PresetStyleDefaultSchema, PresetStylePhotoRealSchema, SchedulerSchema, StableDiffusionVersionSchema, } from './queryParamTypes';
 export const InvalidValidationResultSchema = z.object({
     valid: z.literal(false),
     errors: z.array(z.string()),
@@ -15,6 +15,12 @@ export const ApiErrorSchema = z.object({
     error: z.string(),
     code: z.string(),
 });
+export const ImageExtensionSchema = z.union([
+    z.literal('jpg'),
+    z.literal('jpeg'),
+    z.literal('png'),
+    z.literal('webp'),
+]);
 export const ImageUploadInitResponseSchema = z.object({
     uploadInitImage: z.object({
         id: z.string(),
@@ -121,7 +127,10 @@ const apiKeySecretSchema = z.object({
     webhookCallbackApiKey: z.string(),
 });
 export const webhookPostProcessingResponseSchema = z.object({
-    type: z.literal('post_processing.complete'),
+    type: z.union([
+        z.literal('post_processing.complete'),
+        z.literal('post_processing.completed'),
+    ]),
     object: z.string(),
     timestamp: z.coerce.date(),
     api_version: z.string(),

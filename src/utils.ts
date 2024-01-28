@@ -7,8 +7,6 @@ import path from 'path'
 import { promisify } from 'util'
 import { pipeline } from 'stream'
 import { ImageExtension } from './types.js'
-import { getGlobals } from 'common-es'
-const { __dirname } = getGlobals(import.meta.url)
 
 export const getErrorMessage = (error: unknown) => {
   console.log(error)
@@ -45,7 +43,7 @@ export const saveFileTemporarily = async (
   url: string,
   fileExtension: ImageExtension
 ) => {
-  const tempDir = path.resolve(__dirname, '../tmp') // Absolute path to temp directory
+  const tempDir = path.resolve(process.cwd(), './tmp') // Absolute path to temp directory
 
   // Create temp directory if it doesn't exist
   if (!fs.existsSync(tempDir)) {

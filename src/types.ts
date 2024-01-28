@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import {
+  ImageExtensionSchema,
   UpscaleImageResponseSchema,
   uploadInitImageFromUrlResponseSchema,
   webhookImageGenerationResponseSchema,
@@ -111,7 +112,7 @@ export type SuccessfulGenerationResult = {
   }
 }
 
-export type ImageExtension = 'jpg' | 'png' | 'jpeg' | 'webp'
+export type ImageExtension = z.infer<typeof ImageExtensionSchema>
 
 export type UploadInitImageFromUrlResponse = z.infer<
   typeof uploadInitImageFromUrlResponseSchema

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UpscaleImageResponseSchema, uploadInitImageFromUrlResponseSchema, webhookImageGenerationResponseSchema, webhookPostProcessingResponseSchema, webhookResponseSchema } from './schemas';
+import { ImageExtensionSchema, UpscaleImageResponseSchema, uploadInitImageFromUrlResponseSchema, webhookImageGenerationResponseSchema, webhookPostProcessingResponseSchema, webhookResponseSchema } from './schemas';
 export declare const InvalidValidationResultSchema: z.ZodObject<{
     valid: z.ZodLiteral<false>;
     errors: z.ZodArray<z.ZodString, "many">;
@@ -210,7 +210,7 @@ export type SuccessfulGenerationResult = {
         images: GenerationResultImage[];
     };
 };
-export type ImageExtension = 'jpg' | 'png' | 'jpeg' | 'webp';
+export type ImageExtension = z.infer<typeof ImageExtensionSchema>;
 export type UploadInitImageFromUrlResponse = z.infer<typeof uploadInitImageFromUrlResponseSchema>;
 export type WebhookPostProcessingResultObject = z.infer<typeof webhookPostProcessingResponseSchema>['data']['object'];
 export type WebhookGenerationResultObject = z.infer<typeof webhookImageGenerationResponseSchema>['data']['object'];

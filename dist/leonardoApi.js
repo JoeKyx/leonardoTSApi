@@ -1,15 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { getGlobals } from 'common-es';
-const { __dirname } = getGlobals(import.meta.url);
-import { getErrorMessage, saveFileTemporarily, } from './utils.js';
+import { getErrorMessage, saveFileTemporarily } from './utils';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 import axios from 'axios';
 import { default as express } from 'express';
 import { EventEmitter } from 'events';
-import { GenerationJobResponseSchema, pollingImageGenerationResponseSchema, pollingVariantImageResponseSchema, webhookResponseSchema, } from './schemas.js';
-import { GenerateImageQueryParamsSchema, } from './queryParamTypes.js';
+import { GenerationJobResponseSchema, ImageExtensionSchema, pollingImageGenerationResponseSchema, pollingVariantImageResponseSchema, webhookResponseSchema, } from './schemas';
+import { GenerateImageQueryParamsSchema, } from './queryParamTypes';
 class GenerationEventEmitter extends EventEmitter {
 }
 const generationEventEmitter = new GenerationEventEmitter();
@@ -24,15 +22,15 @@ export default class LeonardoAPI {
     webhookApiKey;
     useWebhook = false;
     constructor(apiKey, useWebhook = false, generationTimeout = 120000, webhookApiKey, port) {
-        if (useWebhook && !webhookApiKey) {
-            throw new Error('Webhook api key is required');
-        }
         this.apiKey = apiKey;
         this.generationTimeout = generationTimeout;
+        console.log('Webhook api key:');
+        console.log(webhookApiKey);
         this.webhookApiKey = webhookApiKey;
         this.useWebhook = useWebhook;
-        const portToUse = port || 3050;
         if (useWebhook) {
+            const portToUse = port || 3050;
+            console.log('Port: ' + portToUse);
             const app = express();
             app.use(express.json());
             app.use(express.urlencoded({ extended: true }));
@@ -46,6 +44,12 @@ export default class LeonardoAPI {
             app.listen(portToUse, () => {
                 console.log('Server running on port ' + portToUse);
             });
+        }
+    }
+    close() {
+        if (this.useWebhook) {
+            console.log('Closing webhook server');
+            process.exit(0);
         }
     }
     async generateImages(params) {
@@ -148,6 +152,32 @@ export default class LeonardoAPI {
             };
         }
     };
+    uploadInitImageFromBuffer = async (buffer, filename) => {
+        // init image upload
+        const fileExtension = ImageExtensionSchema.safeParse(filename.split('.').pop());
+        if (!fileExtension.success) {
+            return {
+                success: false,
+                error: 'Invalid file extension',
+            };
+        }
+        const initUploadResponse = await this.initUploadImage(fileExtension.data);
+        // upload image
+        try {
+            const uploadResponse = await this.uploadImageFile(buffer, filename, initUploadResponse);
+            return {
+                success: true,
+                uploadInitImageId: initUploadResponse.uploadInitImage.id,
+                url: this.baseCDNUrl + initUploadResponse.uploadInitImage.key,
+            };
+        }
+        catch (error) {
+            return {
+                success: false,
+                error: getErrorMessage(error),
+            };
+        }
+    };
     async initUploadImage(fileExtension) {
         // init image upload
         const initUploadUrl = `${this.baseUrl}/init-image`;
@@ -183,7 +213,7 @@ export default class LeonardoAPI {
         Object.entries(parsedFields).forEach(([key, value]) => {
             form.append(key, value);
         });
-        form.append('file', fs.createReadStream(path.resolve(__dirname, filePath)));
+        form.append('file', fs.createReadStream(path.resolve(filePath)));
         try {
             const uploadUrl = initUploadResponse.uploadInitImage.url;
             const uploadResponse = await axios.post(uploadUrl, form);
@@ -201,6 +231,38 @@ export default class LeonardoAPI {
         }
         finally {
             fs.unlinkSync(filePath);
+        }
+    }
+    async uploadImageFile(buffer, filename, initUploadResponse) {
+        const fields = JSON.parse(initUploadResponse.uploadInitImage.fields);
+        let parsedFields = fields;
+        if (typeof fields === 'string') {
+            parsedFields = JSON.parse(fields);
+        }
+        else if (!(fields instanceof Object)) {
+            throw new Error('Fields must be a JSON string or an object');
+        }
+        let form = new FormData();
+        Object.entries(parsedFields).forEach(([key, value]) => {
+            form.append(key, value);
+        });
+        form.append('file', buffer, filename);
+        try {
+            const uploadUrl = initUploadResponse.uploadInitImage.url;
+            const uploadResponse = await axios.post(uploadUrl, form, {
+                headers: form.getHeaders(),
+            });
+            if (uploadResponse.status >= 300) {
+                throw new Error('Upload failed with status: ' + uploadResponse.status);
+            }
+            console.log(uploadResponse.status);
+            console.log(uploadResponse.statusText);
+            console.log(uploadResponse.data);
+            return uploadResponse;
+        }
+        catch (error) {
+            console.error('Error during file upload:', error);
+            throw error;
         }
     }
     async waitForVariationResult(variationId) {
@@ -401,20 +463,23 @@ export default class LeonardoAPI {
         console.log('Right api key:');
         console.log(this.webhookApiKey);
         // Check api key
-        if (generationResultResponse.data.object.apiKey.webhookCallbackApiKey ==
-            this.webhookApiKey) {
-            console.log('Valid api key');
-        }
-        else {
-            console.log('Invalid api key');
-            throw new Error('Invalid api key');
+        if (this.webhookApiKey) {
+            if (generationResultResponse.data.object.apiKey.webhookCallbackApiKey ==
+                this.webhookApiKey) {
+                console.log('Valid api key');
+            }
+            else {
+                console.log('Invalid api key');
+                throw new Error('Invalid api key');
+            }
         }
         try {
             console.log('Trying to emit');
             if (generationResultResponse.type == 'image_generation.complete') {
                 generationEventEmitter.emit(`generation-complete-${generationResultResponse.data.object.id}`, generationResultResponse.data.object);
             }
-            if (generationResultResponse.type == 'post_processing.complete') {
+            if (generationResultResponse.type == 'post_processing.completed' ||
+                generationResultResponse.type == 'post_processing.complete') {
                 upscaleEventEmitter.emit(`upscale-complete-${generationResultResponse.data.object.id}`, generationResultResponse.data.object);
             }
         }
@@ -429,6 +494,6 @@ export default class LeonardoAPI {
     };
 }
 //  TODO:  convert response to right format
-export * from './types.js';
-export * from './queryParamTypes.js';
-export * from './validators.js';
+export * from './types';
+export * from './queryParamTypes';
+export * from './validators';

@@ -1,5 +1,6 @@
-import { GenerationResult, ImageExtension, UploadInitImageFromUrlResponse, UpscaleImageResponse } from './types.js';
-import { GenerateImageQueryParams } from './queryParamTypes.js';
+/// <reference types="node" />
+import { GenerationResult, ImageExtension, UploadInitImageFromUrlResponse, UpscaleImageResponse } from './types';
+import { GenerateImageQueryParams } from './queryParamTypes';
 export default class LeonardoAPI {
     private apiKey;
     private baseUrl;
@@ -8,11 +9,14 @@ export default class LeonardoAPI {
     private webhookApiKey;
     private useWebhook;
     constructor(apiKey: string, useWebhook?: boolean, generationTimeout?: number, webhookApiKey?: string, port?: number);
+    close(): void;
     generateImages(params: GenerateImageQueryParams): Promise<GenerationResult>;
     upscaleImage(imageId: string): Promise<UpscaleImageResponse>;
     uploadInitImageFromUrl: (url: string, fileExtension: ImageExtension) => Promise<UploadInitImageFromUrlResponse>;
+    uploadInitImageFromBuffer: (buffer: Buffer, filename: string) => Promise<UploadInitImageFromUrlResponse>;
     private initUploadImage;
     private uploadImageFromUrl;
+    private uploadImageFile;
     private waitForVariationResult;
     private waitForGenerationResult;
     private pollVariationResult;
@@ -21,7 +25,7 @@ export default class LeonardoAPI {
     private getGenerationResult;
     private webhookHandler;
 }
-export * from './types.js';
-export * from './queryParamTypes.js';
-export * from './validators.js';
+export * from './types';
+export * from './queryParamTypes';
+export * from './validators';
 //# sourceMappingURL=leonardoApi.d.ts.map

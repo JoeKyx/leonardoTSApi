@@ -5,8 +5,6 @@ import fs from 'fs';
 import path from 'path';
 import { promisify } from 'util';
 import { pipeline } from 'stream';
-import { getGlobals } from 'common-es';
-const { __dirname } = getGlobals(import.meta.url);
 export const getErrorMessage = (error) => {
     console.log(error);
     let message;
@@ -39,7 +37,7 @@ export const downloadImage = async (url, path) => {
     await pipe(response, fs.createWriteStream(path));
 };
 export const saveFileTemporarily = async (url, fileExtension) => {
-    const tempDir = path.resolve(__dirname, '../tmp'); // Absolute path to temp directory
+    const tempDir = path.resolve(process.cwd(), './tmp'); // Absolute path to temp directory
     // Create temp directory if it doesn't exist
     if (!fs.existsSync(tempDir)) {
         fs.mkdirSync(tempDir, { recursive: true });
