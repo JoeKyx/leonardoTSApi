@@ -74,11 +74,21 @@ export const UpscaleJobResponseSchema = z.union([
     }),
     ApiErrorSchema,
 ]);
+export const SVDMotionGenerationJobSchema = z.union([
+    z.object({
+        motionSvdGenerationJob: z.object({
+            generationId: z.string(),
+            apiCreditCost: z.number(),
+        }),
+    }),
+    ApiErrorSchema,
+]);
 export const GeneratedImageSchema = z.object({
     url: z.string(),
     nsfw: z.boolean(),
     id: z.string(),
     likeCount: z.number(),
+    motionMP4URL: z.string().nullable(),
     generated_image_variation_generics: z.array(z.string()),
 });
 export const GenerateImageResponseSchema = z.object({
@@ -208,16 +218,16 @@ export const pollingImageGenerationResponseSchema = z.object({
         imageHeight: z.number(),
         imageToVideo: z.boolean().nullable(),
         imageWidth: z.number(),
-        inferenceSteps: z.number(),
+        inferenceSteps: z.number().nullable(),
         seed: z.number().nullable(),
         public: z.boolean(),
-        scheduler: SchedulerSchema,
-        sdVersion: StableDiffusionVersionSchema,
+        scheduler: SchedulerSchema.nullable(),
+        sdVersion: StableDiffusionVersionSchema.nullable(),
         status: z.enum(['COMPLETE', 'FAILED', 'PENDING']),
         id: z.string(),
         createdAt: z.coerce.date(),
-        promptMagic: z.boolean(),
-        photoReal: z.boolean(),
+        promptMagic: z.boolean().nullable(),
+        photoReal: z.boolean().nullable(),
     }),
 });
 export const pollingVariantImageResponseSchema = z.object({

@@ -33,6 +33,11 @@ export declare const ValidationResultSchema: z.ZodUnion<[z.ZodObject<{
 }, {
     valid: true;
 }>]>;
+export type AnimateImageParams = {
+    motionStrength?: number;
+    isVariation?: boolean;
+    isInitImage?: boolean;
+};
 export type ValidValidationResult = z.infer<typeof ValidValidationResultSchema>;
 export type InvalidValidationResult = z.infer<typeof InvalidValidationResultSchema>;
 export type ValidationResult = z.infer<typeof ValidationResultSchema>;
@@ -85,16 +90,37 @@ export declare const ImageUploadInitResponseSchema: z.ZodObject<{
     };
 }>;
 export type ImageUploadInitResponse = z.infer<typeof ImageUploadInitResponseSchema>;
-export declare const SdGenerationJobSchema: z.ZodObject<{
-    generationId: z.ZodString;
-    apiCreditCost: z.ZodNumber;
+export declare const SdGenerationJobSchema: z.ZodUnion<[z.ZodObject<{
+    motionSvdGenerationJob: z.ZodObject<{
+        generationId: z.ZodString;
+        apiCreditCost: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        generationId: string;
+        apiCreditCost: number;
+    }, {
+        generationId: string;
+        apiCreditCost: number;
+    }>;
 }, "strip", z.ZodTypeAny, {
-    generationId: string;
-    apiCreditCost: number;
+    motionSvdGenerationJob: {
+        generationId: string;
+        apiCreditCost: number;
+    };
 }, {
-    generationId: string;
-    apiCreditCost: number;
-}>;
+    motionSvdGenerationJob: {
+        generationId: string;
+        apiCreditCost: number;
+    };
+}>, z.ZodObject<{
+    error: z.ZodString;
+    code: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    code: string;
+    error: string;
+}, {
+    code: string;
+    error: string;
+}>]>;
 export declare const GenerationJobResponseSchema: z.ZodUnion<[z.ZodObject<{
     sdGenerationJob: z.ZodObject<{
         generationId: z.ZodString;
@@ -127,6 +153,7 @@ export declare const GenerationJobResponseSchema: z.ZodUnion<[z.ZodObject<{
     error: string;
 }>]>;
 export type GenerationJobResponse = z.infer<typeof GenerationJobResponseSchema>;
+export type SVDGenerationJobResponse = z.infer<typeof SdGenerationJobSchema>;
 export declare const UpscaleJobResponseSchema: z.ZodUnion<[z.ZodObject<{
     sdUpscaleJob: z.ZodObject<{
         id: z.ZodString;
@@ -198,7 +225,18 @@ export declare const VariationResultResponseSchema: z.ZodObject<{
 }>;
 export type VariationResultResponse = z.infer<typeof VariationResultResponseSchema>;
 export type UpscaleImageResponse = z.infer<typeof UpscaleImageResponseSchema>;
+export type AnimateImageResponse = {
+    success: true;
+    result: {
+        id: string;
+        url: string;
+    };
+} | {
+    success: false;
+    message: string;
+};
 export type GenerationResultImage = {
+    motionMP4URL: string | null;
     id: string;
     url: string;
 };

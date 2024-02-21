@@ -223,23 +223,57 @@ export declare const UpscaleJobResponseSchema: z.ZodUnion<[z.ZodObject<{
     code: string;
     error: string;
 }>]>;
+export declare const SVDMotionGenerationJobSchema: z.ZodUnion<[z.ZodObject<{
+    motionSvdGenerationJob: z.ZodObject<{
+        generationId: z.ZodString;
+        apiCreditCost: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        generationId: string;
+        apiCreditCost: number;
+    }, {
+        generationId: string;
+        apiCreditCost: number;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    motionSvdGenerationJob: {
+        generationId: string;
+        apiCreditCost: number;
+    };
+}, {
+    motionSvdGenerationJob: {
+        generationId: string;
+        apiCreditCost: number;
+    };
+}>, z.ZodObject<{
+    error: z.ZodString;
+    code: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    code: string;
+    error: string;
+}, {
+    code: string;
+    error: string;
+}>]>;
 export declare const GeneratedImageSchema: z.ZodObject<{
     url: z.ZodString;
     nsfw: z.ZodBoolean;
     id: z.ZodString;
     likeCount: z.ZodNumber;
+    motionMP4URL: z.ZodNullable<z.ZodString>;
     generated_image_variation_generics: z.ZodArray<z.ZodString, "many">;
 }, "strip", z.ZodTypeAny, {
     id: string;
     url: string;
     nsfw: boolean;
     likeCount: number;
+    motionMP4URL: string | null;
     generated_image_variation_generics: string[];
 }, {
     id: string;
     url: string;
     nsfw: boolean;
     likeCount: number;
+    motionMP4URL: string | null;
     generated_image_variation_generics: string[];
 }>;
 export declare const GenerateImageResponseSchema: z.ZodObject<{
@@ -249,18 +283,21 @@ export declare const GenerateImageResponseSchema: z.ZodObject<{
         nsfw: z.ZodBoolean;
         id: z.ZodString;
         likeCount: z.ZodNumber;
+        motionMP4URL: z.ZodNullable<z.ZodString>;
         generated_image_variation_generics: z.ZodArray<z.ZodString, "many">;
     }, "strip", z.ZodTypeAny, {
         id: string;
         url: string;
         nsfw: boolean;
         likeCount: number;
+        motionMP4URL: string | null;
         generated_image_variation_generics: string[];
     }, {
         id: string;
         url: string;
         nsfw: boolean;
         likeCount: number;
+        motionMP4URL: string | null;
         generated_image_variation_generics: string[];
     }>, "many">;
     modelId: z.ZodNullable<z.ZodString>;
@@ -305,6 +342,7 @@ export declare const GenerateImageResponseSchema: z.ZodObject<{
         url: string;
         nsfw: boolean;
         likeCount: number;
+        motionMP4URL: string | null;
         generated_image_variation_generics: string[];
     }[];
     negativePrompt: string | null;
@@ -335,6 +373,7 @@ export declare const GenerateImageResponseSchema: z.ZodObject<{
         url: string;
         nsfw: boolean;
         likeCount: number;
+        motionMP4URL: string | null;
         generated_image_variation_generics: string[];
     }[];
     negativePrompt: string | null;
@@ -527,8 +566,8 @@ export declare const webhookImageSchema: z.ZodObject<{
     generationId: string;
     createdAt: Date;
     likeCount: number;
-    motionGIFURL: string | null;
     motionMP4URL: string | null;
+    motionGIFURL: string | null;
     teamId: string | null;
     trendingScore: number;
     userId: string;
@@ -540,8 +579,8 @@ export declare const webhookImageSchema: z.ZodObject<{
     generationId: string;
     createdAt: Date;
     likeCount: number;
-    motionGIFURL: string | null;
     motionMP4URL: string | null;
+    motionGIFURL: string | null;
     teamId: string | null;
     trendingScore: number;
     userId: string;
@@ -589,8 +628,8 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -602,8 +641,8 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -630,8 +669,8 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -657,8 +696,8 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -686,8 +725,8 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -715,8 +754,8 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -748,8 +787,8 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -783,8 +822,8 @@ export declare const webhookImageGenerationResponseSchema: z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -824,26 +863,26 @@ export declare const pollingImageGenerationResponseSchema: z.ZodObject<{
         imageHeight: z.ZodNumber;
         imageToVideo: z.ZodNullable<z.ZodBoolean>;
         imageWidth: z.ZodNumber;
-        inferenceSteps: z.ZodNumber;
+        inferenceSteps: z.ZodNullable<z.ZodNumber>;
         seed: z.ZodNullable<z.ZodNumber>;
         public: z.ZodBoolean;
-        scheduler: z.ZodUnion<[z.ZodLiteral<"KLMS">, z.ZodLiteral<"EULER_ANCESTRAL_DISCRETE">, z.ZodLiteral<"EULER_DISCRETE">, z.ZodLiteral<"DDIM">, z.ZodLiteral<"DPM_SOLVER">, z.ZodLiteral<"PNDM">, z.ZodLiteral<"LEONARDO">]>;
-        sdVersion: z.ZodString;
+        scheduler: z.ZodNullable<z.ZodUnion<[z.ZodLiteral<"KLMS">, z.ZodLiteral<"EULER_ANCESTRAL_DISCRETE">, z.ZodLiteral<"EULER_DISCRETE">, z.ZodLiteral<"DDIM">, z.ZodLiteral<"DPM_SOLVER">, z.ZodLiteral<"PNDM">, z.ZodLiteral<"LEONARDO">]>>;
+        sdVersion: z.ZodNullable<z.ZodString>;
         status: z.ZodEnum<["COMPLETE", "FAILED", "PENDING"]>;
         id: z.ZodString;
         createdAt: z.ZodDate;
-        promptMagic: z.ZodBoolean;
-        photoReal: z.ZodBoolean;
+        promptMagic: z.ZodNullable<z.ZodBoolean>;
+        photoReal: z.ZodNullable<z.ZodBoolean>;
     }, "strip", z.ZodTypeAny, {
         id: string;
         public: boolean;
         prompt: string;
         status: "COMPLETE" | "FAILED" | "PENDING";
         modelId: string | null;
-        promptMagic: boolean;
-        scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM";
+        promptMagic: boolean | null;
+        scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM" | null;
         seed: number | null;
-        photoReal: boolean;
+        photoReal: boolean | null;
         createdAt: Date;
         generated_images: {
             id: string;
@@ -855,8 +894,8 @@ export declare const pollingImageGenerationResponseSchema: z.ZodObject<{
         negativePrompt: string | null;
         imageHeight: number;
         imageWidth: number;
-        inferenceSteps: number;
-        sdVersion: string;
+        inferenceSteps: number | null;
+        sdVersion: string | null;
         motion: boolean | null;
         motionModel: string | null;
         motionStrength: number | null;
@@ -867,10 +906,10 @@ export declare const pollingImageGenerationResponseSchema: z.ZodObject<{
         prompt: string;
         status: "COMPLETE" | "FAILED" | "PENDING";
         modelId: string | null;
-        promptMagic: boolean;
-        scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM";
+        promptMagic: boolean | null;
+        scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM" | null;
         seed: number | null;
-        photoReal: boolean;
+        photoReal: boolean | null;
         createdAt: Date;
         generated_images: {
             id: string;
@@ -882,8 +921,8 @@ export declare const pollingImageGenerationResponseSchema: z.ZodObject<{
         negativePrompt: string | null;
         imageHeight: number;
         imageWidth: number;
-        inferenceSteps: number;
-        sdVersion: string;
+        inferenceSteps: number | null;
+        sdVersion: string | null;
         motion: boolean | null;
         motionModel: string | null;
         motionStrength: number | null;
@@ -896,10 +935,10 @@ export declare const pollingImageGenerationResponseSchema: z.ZodObject<{
         prompt: string;
         status: "COMPLETE" | "FAILED" | "PENDING";
         modelId: string | null;
-        promptMagic: boolean;
-        scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM";
+        promptMagic: boolean | null;
+        scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM" | null;
         seed: number | null;
-        photoReal: boolean;
+        photoReal: boolean | null;
         createdAt: Date;
         generated_images: {
             id: string;
@@ -911,8 +950,8 @@ export declare const pollingImageGenerationResponseSchema: z.ZodObject<{
         negativePrompt: string | null;
         imageHeight: number;
         imageWidth: number;
-        inferenceSteps: number;
-        sdVersion: string;
+        inferenceSteps: number | null;
+        sdVersion: string | null;
         motion: boolean | null;
         motionModel: string | null;
         motionStrength: number | null;
@@ -925,10 +964,10 @@ export declare const pollingImageGenerationResponseSchema: z.ZodObject<{
         prompt: string;
         status: "COMPLETE" | "FAILED" | "PENDING";
         modelId: string | null;
-        promptMagic: boolean;
-        scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM";
+        promptMagic: boolean | null;
+        scheduler: "LEONARDO" | "KLMS" | "EULER_ANCESTRAL_DISCRETE" | "EULER_DISCRETE" | "DDIM" | "DPM_SOLVER" | "PNDM" | null;
         seed: number | null;
-        photoReal: boolean;
+        photoReal: boolean | null;
         createdAt: Date;
         generated_images: {
             id: string;
@@ -940,8 +979,8 @@ export declare const pollingImageGenerationResponseSchema: z.ZodObject<{
         negativePrompt: string | null;
         imageHeight: number;
         imageWidth: number;
-        inferenceSteps: number;
-        sdVersion: string;
+        inferenceSteps: number | null;
+        sdVersion: string | null;
         motion: boolean | null;
         motionModel: string | null;
         motionStrength: number | null;
@@ -1048,8 +1087,8 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -1061,8 +1100,8 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -1089,8 +1128,8 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -1116,8 +1155,8 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -1145,8 +1184,8 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -1174,8 +1213,8 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -1207,8 +1246,8 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;
@@ -1242,8 +1281,8 @@ export declare const webhookResponseSchema: z.ZodUnion<[z.ZodObject<{
                 generationId: string;
                 createdAt: Date;
                 likeCount: number;
-                motionGIFURL: string | null;
                 motionMP4URL: string | null;
+                motionGIFURL: string | null;
                 teamId: string | null;
                 trendingScore: number;
                 userId: string;

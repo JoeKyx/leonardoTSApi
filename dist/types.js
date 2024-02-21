@@ -23,10 +23,15 @@ export const ImageUploadInitResponseSchema = z.object({
         __typename: z.string(),
     }),
 });
-export const SdGenerationJobSchema = z.object({
-    generationId: z.string(),
-    apiCreditCost: z.number(),
-});
+export const SdGenerationJobSchema = z.union([
+    z.object({
+        motionSvdGenerationJob: z.object({
+            generationId: z.string(),
+            apiCreditCost: z.number(),
+        }),
+    }),
+    ApiErrorSchema,
+]);
 export const GenerationJobResponseSchema = z.union([
     z.object({
         sdGenerationJob: z.object({

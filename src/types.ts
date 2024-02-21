@@ -22,6 +22,12 @@ export const ValidationResultSchema = z.union([
   ValidValidationResultSchema,
 ])
 
+export type AnimateImageParams = {
+  motionStrength?: number
+  isVariation?: boolean
+  isInitImage?: boolean
+}
+
 export type ValidValidationResult = z.infer<typeof ValidValidationResultSchema>
 
 export type InvalidValidationResult = z.infer<
@@ -51,10 +57,15 @@ export type ImageUploadInitResponse = z.infer<
   typeof ImageUploadInitResponseSchema
 >
 
-export const SdGenerationJobSchema = z.object({
-  generationId: z.string(),
-  apiCreditCost: z.number(),
-})
+export const SdGenerationJobSchema = z.union([
+  z.object({
+    motionSvdGenerationJob: z.object({
+      generationId: z.string(),
+      apiCreditCost: z.number(),
+    }),
+  }),
+  ApiErrorSchema,
+])
 
 export const GenerationJobResponseSchema = z.union([
   z.object({
@@ -67,6 +78,8 @@ export const GenerationJobResponseSchema = z.union([
 ])
 
 export type GenerationJobResponse = z.infer<typeof GenerationJobResponseSchema>
+
+export type SVDGenerationJobResponse = z.infer<typeof SdGenerationJobSchema>
 
 export const UpscaleJobResponseSchema = z.union([
   z.object({
@@ -98,7 +111,21 @@ export type VariationResultResponse = z.infer<
 
 export type UpscaleImageResponse = z.infer<typeof UpscaleImageResponseSchema>
 
+export type AnimateImageResponse =
+  | {
+      success: true
+      result: {
+        id: string
+        url: string
+      }
+    }
+  | {
+      success: false
+      message: string
+    }
+
 export type GenerationResultImage = {
+  motionMP4URL: string | null
   id: string
   url: string
 }

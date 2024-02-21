@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { GenerationResult, ImageExtension, UploadInitImageFromUrlResponse, UpscaleImageResponse } from './types';
+import { AnimateImageParams, AnimateImageResponse, GenerationResult, ImageExtension, UploadInitImageFromUrlResponse, UpscaleImageResponse } from './types';
 import { GenerateImageQueryParams } from './queryParamTypes';
 export default class LeonardoAPI {
     private apiKey;
@@ -11,6 +11,7 @@ export default class LeonardoAPI {
     constructor(apiKey: string, useWebhook?: boolean, generationTimeout?: number, webhookApiKey?: string, port?: number);
     close(): void;
     generateImages(params: GenerateImageQueryParams): Promise<GenerationResult>;
+    animateImage(imageId: string, params?: AnimateImageParams): Promise<AnimateImageResponse>;
     upscaleImage(imageId: string): Promise<UpscaleImageResponse>;
     uploadInitImageFromUrl: (url: string, fileExtension: ImageExtension) => Promise<UploadInitImageFromUrlResponse>;
     uploadInitImageFromBuffer: (buffer: Buffer, filename: string) => Promise<UploadInitImageFromUrlResponse>;

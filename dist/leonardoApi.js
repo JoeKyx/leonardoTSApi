@@ -6,7 +6,7 @@ import FormData from 'form-data';
 import axios from 'axios';
 import { default as express } from 'express';
 import { EventEmitter } from 'events';
-import { GenerationJobResponseSchema, ImageExtensionSchema, pollingImageGenerationResponseSchema, pollingVariantImageResponseSchema, webhookResponseSchema, } from './schemas';
+import { GenerationJobResponseSchema, ImageExtensionSchema, SVDMotionGenerationJobSchema, pollingImageGenerationResponseSchema, pollingVariantImageResponseSchema, webhookResponseSchema, } from './schemas';
 import { GenerateImageQueryParamsSchema, } from './queryParamTypes';
 class GenerationEventEmitter extends EventEmitter {
 }
@@ -88,6 +88,71 @@ export default class LeonardoAPI {
             const generationId = generationJobResponse.sdGenerationJob.generationId;
             const genResult = await this.waitForGenerationResult(generationId);
             return genResult;
+        }
+        catch (error) {
+            return {
+                success: false,
+                message: getErrorMessage(error),
+            };
+        }
+    }
+    async animateImage(imageId, params) {
+        const animateUrl = `${this.baseUrl}/generations-motion-svd`;
+        const response = await fetch(animateUrl, {
+            method: 'POST',
+            headers: {
+                accept: 'application/json',
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${this.apiKey}`,
+            },
+            body: JSON.stringify({
+                imageId: imageId,
+                ...params,
+            }),
+        });
+        console.log(response);
+        const generationJobResponse = (await response.json());
+        console.log('Response: ');
+        console.log(generationJobResponse);
+        try {
+            console.log('Parsing');
+            SVDMotionGenerationJobSchema.parse(generationJobResponse);
+        }
+        catch (error) {
+            return {
+                success: false,
+                message: getErrorMessage(error),
+            };
+        }
+        if ('error' in generationJobResponse)
+            return { success: false, message: 'Unknown error' };
+        try {
+            const generationId = generationJobResponse.motionSvdGenerationJob.generationId;
+            const genResult = await this.waitForGenerationResult(generationId);
+            console.log('We got a genResult');
+            console.log(genResult);
+            if (genResult.success) {
+                if (!genResult.result.images[0].motionMP4URL) {
+                    return {
+                        success: false,
+                        message: 'No motionMP4URL in result',
+                    };
+                }
+                console.log(genResult.result.images[0].motionMP4URL);
+                return {
+                    success: true,
+                    result: {
+                        id: genResult.result.generationId,
+                        url: genResult.result.images[0].motionMP4URL,
+                    },
+                };
+            }
+            else {
+                return {
+                    success: false,
+                    message: genResult.message || 'Unknown error',
+                };
+            }
         }
         catch (error) {
             return {
@@ -316,6 +381,7 @@ export default class LeonardoAPI {
                             images: generationResult.images.map((image) => ({
                                 id: image.id,
                                 url: image.url,
+                                motionMP4URL: image.motionMP4URL,
                             })),
                         },
                     });
@@ -428,6 +494,7 @@ export default class LeonardoAPI {
                         images: generationResult.generated_images.map((image) => ({
                             id: image.id,
                             url: image.url,
+                            motionMP4URL: image.motionMP4URL,
                         })),
                     },
                 };
@@ -447,9 +514,10 @@ export default class LeonardoAPI {
         }
         else {
             console.log(pollingImageResponse.error);
+            // TODO: Implement a better error handling
             return {
                 success: false,
-                message: 'generation failed (Code 0)',
+                message: 'PENDING',
             };
         }
     }
