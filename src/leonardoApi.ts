@@ -1,3 +1,7 @@
+import FormData from 'form-data'
+import fs from 'fs'
+import fetch from 'node-fetch'
+import path from 'path'
 import {
   AnimateImageParams,
   AnimateImageResponse,
@@ -10,35 +14,27 @@ import {
   UploadInitImageFromUrlResponse,
   UpscaleImageResponse,
   UpscaleJobResponse,
-  VariationResult,
-  VariationResultResponse,
   WebhookGenerationResultObject,
   WebhookPostProcessingResultObject,
-  WebhookResponse,
 } from './types'
-import fs from 'fs'
-import path from 'path'
-import { bufferToStream, getErrorMessage, saveFileTemporarily } from './utils'
-import fetch from 'node-fetch'
-import FormData from 'form-data'
+import { getErrorMessage, saveFileTemporarily } from './utils'
 
 import axios from 'axios'
 import { default as e, default as express } from 'express'
 
 import { EventEmitter } from 'events'
 import {
+  GenerateImageQueryParams,
+  GenerateImageQueryParamsSchema,
+} from './queryParamTypes'
+import {
   GenerationJobResponseSchema,
   ImageExtensionSchema,
   SVDMotionGenerationJobSchema,
-  SdGenerationJobSchema,
   pollingImageGenerationResponseSchema,
   pollingVariantImageResponseSchema,
   webhookResponseSchema,
 } from './schemas'
-import {
-  GenerateImageQueryParams,
-  GenerateImageQueryParamsSchema,
-} from './queryParamTypes'
 
 class GenerationEventEmitter extends EventEmitter {}
 const generationEventEmitter = new GenerationEventEmitter()
@@ -63,8 +59,7 @@ export default class LeonardoAPI {
   ) {
     this.apiKey = apiKey
     this.generationTimeout = generationTimeout
-    console.log('Webhook api key:')
-    console.log(webhookApiKey)
+
     this.webhookApiKey = webhookApiKey
     this.useWebhook = useWebhook
 
@@ -165,11 +160,8 @@ export default class LeonardoAPI {
 
     const generationJobResponse =
       (await response.json()) as SVDGenerationJobResponse
-    console.log('Response: ')
-    console.log(generationJobResponse)
 
     try {
-      console.log('Parsing')
       SVDMotionGenerationJobSchema.parse(generationJobResponse)
     } catch (error) {
       return {
@@ -184,8 +176,6 @@ export default class LeonardoAPI {
       const generationId =
         generationJobResponse.motionSvdGenerationJob.generationId
       const genResult = await this.waitForGenerationResult(generationId)
-      console.log('We got a genResult')
-      console.log(genResult)
       if (genResult.success) {
         if (!genResult.result.images[0].motionMP4URL) {
           return {
@@ -193,7 +183,6 @@ export default class LeonardoAPI {
             message: 'No motionMP4URL in result',
           }
         }
-        console.log(genResult.result.images[0].motionMP4URL)
         return {
           success: true,
           result: {
@@ -333,8 +322,6 @@ export default class LeonardoAPI {
 
     const initUploadResponse =
       (await response.json()) as ImageUploadInitResponse
-    console.log('json:')
-    console.log(initUploadResponse)
     return initUploadResponse
   }
 
@@ -368,9 +355,6 @@ export default class LeonardoAPI {
       if (uploadResponse.status >= 300) {
         throw new Error('Upload failed with status: ' + uploadResponse.status)
       }
-      console.log(uploadResponse.status)
-      console.log(uploadResponse.statusText)
-      console.log(uploadResponse.data)
 
       return uploadResponse
     } catch (error) {
@@ -407,9 +391,6 @@ export default class LeonardoAPI {
       if (uploadResponse.status >= 300) {
         throw new Error('Upload failed with status: ' + uploadResponse.status)
       }
-      console.log(uploadResponse.status)
-      console.log(uploadResponse.statusText)
-      console.log(uploadResponse.data)
 
       return uploadResponse
     } catch (error) {
@@ -428,7 +409,6 @@ export default class LeonardoAPI {
         })
       }, this.generationTimeout)
       if (!this.useWebhook || !this.webhookApiKey) {
-        console.log('Using polling')
         this.pollVariationResult(variationId, resolve, reject, timeout)
       } else {
         upscaleEventEmitter.once(
@@ -459,9 +439,7 @@ export default class LeonardoAPI {
           message: 'Generation timeout',
         })
       }, this.generationTimeout)
-      console.log('Waiting for generation result ' + generationId + '...')
       if (!this.useWebhook || !this.webhookApiKey) {
-        console.log('Using polling')
         this.pollGenerationResult(generationId, resolve, reject, timeout)
       } else {
         generationEventEmitter.once(
@@ -632,28 +610,19 @@ export default class LeonardoAPI {
   }
 
   private webhookHandler = async (req: e.Request, res: e.Response) => {
-    console.log('Webhook received')
     const generationResultResponse = webhookResponseSchema.parse(req.body)
-    console.log('Webhook response:')
-    console.log(generationResultResponse)
-    console.log('Api key:')
-    console.log(generationResultResponse.data.object.apiKey)
-    console.log('Right api key:')
-    console.log(this.webhookApiKey)
+
     // Check api key
     if (this.webhookApiKey) {
       if (
         generationResultResponse.data.object.apiKey.webhookCallbackApiKey ==
         this.webhookApiKey
       ) {
-        console.log('Valid api key')
       } else {
-        console.log('Invalid api key')
         throw new Error('Invalid api key')
       }
     }
     try {
-      console.log('Trying to emit')
       if (generationResultResponse.type == 'image_generation.complete') {
         generationEventEmitter.emit(
           `generation-complete-${generationResultResponse.data.object.id}`,
@@ -682,6 +651,6 @@ export default class LeonardoAPI {
 
 //  TODO:  convert response to right format
 
-export * from './types'
 export * from './queryParamTypes'
+export * from './types'
 export * from './validators'

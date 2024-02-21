@@ -26,7 +26,7 @@ export default class LeonardoAPI {
     private getGenerationResult;
     private webhookHandler;
 }
-export * from './types';
 export * from './queryParamTypes';
+export * from './types';
 export * from './validators';
 //# sourceMappingURL=leonardoApi.d.ts.map
