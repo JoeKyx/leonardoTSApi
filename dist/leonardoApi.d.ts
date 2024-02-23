@@ -12,6 +12,7 @@ export default class LeonardoAPI {
     close(): void;
     generateImagesBase: (params: GenerateImageQueryParams) => Promise<BasicGenerationResult>;
     generateImages(params: GenerateImageQueryParams): Promise<GenerationResult>;
+    animateImageBase: (imageId: string, params?: AnimateImageParams) => Promise<BasicGenerationResult>;
     animateImage(imageId: string, params?: AnimateImageParams): Promise<AnimateImageResponse>;
     upscaleImage(imageId: string): Promise<UpscaleImageResponse>;
     uploadInitImageFromUrl: (url: string, fileExtension: ImageExtension) => Promise<UploadInitImageFromUrlResponse>;

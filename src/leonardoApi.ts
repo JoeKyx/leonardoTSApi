@@ -150,10 +150,10 @@ export default class LeonardoAPI {
     }
   }
 
-  public async animateImage(
+  public animateImageBase = async (
     imageId: string,
     params?: AnimateImageParams
-  ): Promise<AnimateImageResponse> {
+  ): Promise<BasicGenerationResult> => {
     const animateUrl = `${this.baseUrl}/generations-motion-svd`
     const response = await fetch(animateUrl, {
       method: 'POST',
@@ -184,10 +184,22 @@ export default class LeonardoAPI {
 
     if ('error' in generationJobResponse)
       return { success: false, message: 'Unknown error' }
+
+    const generationId =
+      generationJobResponse.motionSvdGenerationJob.generationId
+    return { success: true, generationId: generationId }
+  }
+
+  public async animateImage(
+    imageId: string,
+    params?: AnimateImageParams
+  ): Promise<AnimateImageResponse> {
     try {
-      const generationId =
-        generationJobResponse.motionSvdGenerationJob.generationId
-      const genResult = await this.waitForGenerationResult(generationId)
+      const basicSteps = await this.animateImageBase(imageId, params)
+      if (!basicSteps.success) return basicSteps
+      const genResult = await this.waitForGenerationResult(
+        basicSteps.generationId
+      )
       if (genResult.success) {
         if (!genResult.result.images[0].motionMP4URL) {
           return {
