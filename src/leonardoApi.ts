@@ -90,9 +90,9 @@ export default class LeonardoAPI {
     }
   }
 
-  public generateImagesBase = async (
+  public async generateImagesBase(
     params: GenerateImageQueryParams
-  ): Promise<BasicGenerationResult> => {
+  ): Promise<BasicGenerationResult> {
     try {
       GenerateImageQueryParamsSchema.parse(params)
     } catch (error) {
@@ -150,10 +150,10 @@ export default class LeonardoAPI {
     }
   }
 
-  public animateImageBase = async (
+  public async animateImageBase(
     imageId: string,
     params?: AnimateImageParams
-  ): Promise<BasicGenerationResult> => {
+  ): Promise<BasicGenerationResult> {
     const animateUrl = `${this.baseUrl}/generations-motion-svd`
     const response = await fetch(animateUrl, {
       method: 'POST',

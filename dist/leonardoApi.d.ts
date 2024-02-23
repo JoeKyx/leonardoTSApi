@@ -10,9 +10,9 @@ export default class LeonardoAPI {
     private useWebhook;
     constructor(apiKey: string, useWebhook?: boolean, generationTimeout?: number, webhookApiKey?: string, port?: number);
     close(): void;
-    generateImagesBase: (params: GenerateImageQueryParams) => Promise<BasicGenerationResult>;
+    generateImagesBase(params: GenerateImageQueryParams): Promise<BasicGenerationResult>;
     generateImages(params: GenerateImageQueryParams): Promise<GenerationResult>;
-    animateImageBase: (imageId: string, params?: AnimateImageParams) => Promise<BasicGenerationResult>;
+    animateImageBase(imageId: string, params?: AnimateImageParams): Promise<BasicGenerationResult>;
     animateImage(imageId: string, params?: AnimateImageParams): Promise<AnimateImageResponse>;
     upscaleImage(imageId: string): Promise<UpscaleImageResponse>;
     uploadInitImageFromUrl: (url: string, fileExtension: ImageExtension) => Promise<UploadInitImageFromUrlResponse>;

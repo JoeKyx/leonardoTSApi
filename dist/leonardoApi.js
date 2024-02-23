@@ -50,7 +50,7 @@ export default class LeonardoAPI {
             process.exit(0);
         }
     }
-    generateImagesBase = async (params) => {
+    async generateImagesBase(params) {
         try {
             GenerateImageQueryParamsSchema.parse(params);
         }
@@ -86,7 +86,7 @@ export default class LeonardoAPI {
             success: true,
             generationId: generationJobResponse.sdGenerationJob.generationId,
         };
-    };
+    }
     async generateImages(params) {
         try {
             const base = await this.generateImagesBase(params);
@@ -102,7 +102,7 @@ export default class LeonardoAPI {
             };
         }
     }
-    animateImageBase = async (imageId, params) => {
+    async animateImageBase(imageId, params) {
         const animateUrl = `${this.baseUrl}/generations-motion-svd`;
         const response = await fetch(animateUrl, {
             method: 'POST',
@@ -131,7 +131,7 @@ export default class LeonardoAPI {
             return { success: false, message: 'Unknown error' };
         const generationId = generationJobResponse.motionSvdGenerationJob.generationId;
         return { success: true, generationId: generationId };
-    };
+    }
     async animateImage(imageId, params) {
         try {
             const basicSteps = await this.animateImageBase(imageId, params);
