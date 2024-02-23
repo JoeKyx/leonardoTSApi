@@ -139,6 +139,13 @@ export type SuccessfulGenerationResult = {
   }
 }
 
+export type SuccessfulWaitingForGenerationResult = {
+  success: true
+  result: {
+    url: string
+  }
+}
+
 export type ImageExtension = z.infer<typeof ImageExtensionSchema>
 
 export type UploadInitImageFromUrlResponse = z.infer<
@@ -172,6 +179,14 @@ export type VariationResult = SuccessfulVariationResult | FailedResult
 export type WebhookResponse = z.infer<typeof webhookResponseSchema>
 
 export type GenerationResult = SuccessfulGenerationResult | FailedResult
+
+export type BasicGenerationResult =
+  | { success: true; generationId: string }
+  | FailedResult
+
+export type WaitingForGenerationResult =
+  | SuccessfulWaitingForGenerationResult
+  | FailedResult
 
 type ResultWithoutOriginalImageId = Omit<
   SuccessfulVariationResult['result'],

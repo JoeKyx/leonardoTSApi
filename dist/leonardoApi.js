@@ -50,7 +50,7 @@ export default class LeonardoAPI {
             process.exit(0);
         }
     }
-    async generateImages(params) {
+    generateImagesBase = async (params) => {
         try {
             GenerateImageQueryParamsSchema.parse(params);
         }
@@ -82,9 +82,17 @@ export default class LeonardoAPI {
         }
         if ('error' in generationJobResponse)
             return { success: false, message: generationJobResponse.error };
+        return {
+            success: true,
+            generationId: generationJobResponse.sdGenerationJob.generationId,
+        };
+    };
+    async generateImages(params) {
         try {
-            const generationId = generationJobResponse.sdGenerationJob.generationId;
-            const genResult = await this.waitForGenerationResult(generationId);
+            const base = await this.generateImagesBase(params);
+            if (!base.success)
+                return base;
+            const genResult = await this.waitForGenerationResult(base.generationId);
             return genResult;
         }
         catch (error) {

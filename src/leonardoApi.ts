@@ -5,6 +5,7 @@ import path from 'path'
 import {
   AnimateImageParams,
   AnimateImageResponse,
+  BasicGenerationResult,
   GenerationJobResponse,
   GenerationResult,
   ImageExtension,
@@ -89,9 +90,9 @@ export default class LeonardoAPI {
     }
   }
 
-  public async generateImages(
+  public generateImagesBase = async (
     params: GenerateImageQueryParams
-  ): Promise<GenerationResult> {
+  ): Promise<BasicGenerationResult> => {
     try {
       GenerateImageQueryParamsSchema.parse(params)
     } catch (error) {
@@ -126,9 +127,20 @@ export default class LeonardoAPI {
 
     if ('error' in generationJobResponse)
       return { success: false, message: generationJobResponse.error }
+    return {
+      success: true,
+      generationId: generationJobResponse.sdGenerationJob.generationId,
+    }
+  }
+
+  public async generateImages(
+    params: GenerateImageQueryParams
+  ): Promise<GenerationResult> {
     try {
-      const generationId = generationJobResponse.sdGenerationJob.generationId
-      const genResult = await this.waitForGenerationResult(generationId)
+      const base = await this.generateImagesBase(params)
+      if (!base.success) return base
+
+      const genResult = await this.waitForGenerationResult(base.generationId)
       return genResult
     } catch (error) {
       return {
@@ -558,7 +570,7 @@ export default class LeonardoAPI {
     }
   }
 
-  private async getGenerationResult(
+  public async getGenerationResult(
     generationId: string
   ): Promise<GenerationResult> {
     const generationResultUrl = `${this.baseUrl}/generations/${generationId}`

@@ -248,6 +248,12 @@ export type SuccessfulGenerationResult = {
         images: GenerationResultImage[];
     };
 };
+export type SuccessfulWaitingForGenerationResult = {
+    success: true;
+    result: {
+        url: string;
+    };
+};
 export type ImageExtension = z.infer<typeof ImageExtensionSchema>;
 export type UploadInitImageFromUrlResponse = z.infer<typeof uploadInitImageFromUrlResponseSchema>;
 export type WebhookPostProcessingResultObject = z.infer<typeof webhookPostProcessingResponseSchema>['data']['object'];
@@ -268,6 +274,11 @@ export type FailedResult = {
 export type VariationResult = SuccessfulVariationResult | FailedResult;
 export type WebhookResponse = z.infer<typeof webhookResponseSchema>;
 export type GenerationResult = SuccessfulGenerationResult | FailedResult;
+export type BasicGenerationResult = {
+    success: true;
+    generationId: string;
+} | FailedResult;
+export type WaitingForGenerationResult = SuccessfulWaitingForGenerationResult | FailedResult;
 type ResultWithoutOriginalImageId = Omit<SuccessfulVariationResult['result'], 'originalImageId'>;
 export type SuccessfulVariationResultWithoutOriginalImageId = Omit<SuccessfulVariationResult, 'result'> & {
     result: ResultWithoutOriginalImageId;
