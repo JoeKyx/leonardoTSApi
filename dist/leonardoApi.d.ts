@@ -21,6 +21,7 @@ export default class LeonardoAPI {
     private uploadImageFromUrl;
     private uploadImageFile;
     private waitForVariationResult;
+    private waitForVideoGenerationResult;
     private waitForGenerationResult;
     private pollVariationResult;
     private getVariationResult;

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ImageExtensionSchema, UpscaleImageResponseSchema, uploadInitImageFromUrlResponseSchema, webhookImageGenerationResponseSchema, webhookPostProcessingResponseSchema, webhookResponseSchema } from './schemas';
+import { ImageExtensionSchema, UpscaleImageResponseSchema, uploadInitImageFromUrlResponseSchema, webhookImageGenerationResponseSchema, webhookPostProcessingResponseSchema, webhookResponseSchema, webhookVideoGenerationResponseSchema } from './schemas';
 export declare const InvalidValidationResultSchema: z.ZodObject<{
     valid: z.ZodLiteral<false>;
     errors: z.ZodArray<z.ZodString, "many">;
@@ -240,12 +240,23 @@ export type GenerationResultImage = {
     id: string;
     url: string;
 };
+export type VideoGenerationResultImage = {
+    motionMP4URL: string;
+    id: string;
+};
 export type SuccessfulGenerationResult = {
     success: true;
     result: {
         prompt: string;
         generationId: string;
         images: GenerationResultImage[];
+    };
+};
+export type SuccessfulVideoGenerationResult = {
+    success: true;
+    result: {
+        generationId: string;
+        video: VideoGenerationResultImage;
     };
 };
 export type SuccessfulWaitingForGenerationResult = {
@@ -258,6 +269,7 @@ export type ImageExtension = z.infer<typeof ImageExtensionSchema>;
 export type UploadInitImageFromUrlResponse = z.infer<typeof uploadInitImageFromUrlResponseSchema>;
 export type WebhookPostProcessingResultObject = z.infer<typeof webhookPostProcessingResponseSchema>['data']['object'];
 export type WebhookGenerationResultObject = z.infer<typeof webhookImageGenerationResponseSchema>['data']['object'];
+export type WebhookVideoGenerationResultObject = z.infer<typeof webhookVideoGenerationResponseSchema>['data']['object'];
 export type SuccessfulVariationResult = {
     success: true;
     result: {
@@ -274,6 +286,7 @@ export type FailedResult = {
 export type VariationResult = SuccessfulVariationResult | FailedResult;
 export type WebhookResponse = z.infer<typeof webhookResponseSchema>;
 export type GenerationResult = SuccessfulGenerationResult | FailedResult;
+export type VideoGenerationResult = SuccessfulVideoGenerationResult | FailedResult;
 export type BasicGenerationResult = {
     success: true;
     generationId: string;

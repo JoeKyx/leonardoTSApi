@@ -137,9 +137,9 @@ export default class LeonardoAPI {
             const basicSteps = await this.animateImageBase(imageId, params);
             if (!basicSteps.success)
                 return basicSteps;
-            const genResult = await this.waitForGenerationResult(basicSteps.generationId);
+            const genResult = await this.waitForVideoGenerationResult(basicSteps.generationId);
             if (genResult.success) {
-                if (!genResult.result.images[0].motionMP4URL) {
+                if (!genResult.result.video.motionMP4URL) {
                     return {
                         success: false,
                         message: 'No motionMP4URL in result',
@@ -149,7 +149,7 @@ export default class LeonardoAPI {
                     success: true,
                     result: {
                         id: genResult.result.generationId,
-                        url: genResult.result.images[0].motionMP4URL,
+                        url: genResult.result.video.motionMP4URL,
                     },
                 };
             }
@@ -233,6 +233,7 @@ export default class LeonardoAPI {
             };
         }
         const initUploadResponse = await this.initUploadImage(fileExtension.data);
+        console.log(initUploadResponse);
         // upload image
         try {
             const uploadResponse = await this.uploadImageFile(buffer, filename, initUploadResponse);
@@ -348,6 +349,64 @@ export default class LeonardoAPI {
                             method: variationResult.transformType,
                             url: variationResult.url,
                             variationId: variationResult.id,
+                        },
+                    });
+                });
+            }
+        });
+    }
+    async waitForVideoGenerationResult(generationId) {
+        return new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+                reject({
+                    success: false,
+                    message: 'Generation timeout',
+                });
+            }, this.generationTimeout);
+            if (!this.useWebhook || !this.webhookApiKey) {
+                const resolveToVideo = (generationResult) => {
+                    clearTimeout(timeout);
+                    if (!generationResult.success) {
+                        reject(generationResult);
+                        return;
+                    }
+                    if (!generationResult.result.images[0].motionMP4URL) {
+                        reject({
+                            success: false,
+                            message: 'No motionMP4URL in result',
+                        });
+                        return;
+                    }
+                    resolve({
+                        success: true,
+                        result: {
+                            generationId: generationResult.result.generationId,
+                            video: {
+                                id: generationResult.result.images[0].id,
+                                motionMP4URL: generationResult.result.images[0].motionMP4URL,
+                            },
+                        },
+                    });
+                };
+                this.pollGenerationResult(generationId, resolveToVideo, reject, timeout);
+            }
+            else {
+                generationEventEmitter.once(`generation-complete-${generationId}`, (generationResult) => {
+                    clearTimeout(timeout);
+                    if (!generationResult.images[0].motionMP4URL) {
+                        reject({
+                            success: false,
+                            message: 'No motionMP4URL in result',
+                        });
+                    }
+                    resolve({
+                        success: true,
+                        result: {
+                            generationId: generationResult.id,
+                            video: {
+                                id: generationResult.images[0].id,
+                                motionMP4URL: generationResult.images[0].motionMP4URL,
+                            },
                         },
                     });
                 });
@@ -529,6 +588,9 @@ export default class LeonardoAPI {
         }
         try {
             if (generationResultResponse.type == 'image_generation.complete') {
+                generationEventEmitter.emit(`generation-complete-${generationResultResponse.data.object.id}`, generationResultResponse.data.object);
+            }
+            if (generationResultResponse.type == 'video_generation.complete') {
                 generationEventEmitter.emit(`generation-complete-${generationResultResponse.data.object.id}`, generationResultResponse.data.object);
             }
             if (generationResultResponse.type == 'post_processing.completed' ||

@@ -6,6 +6,7 @@ import {
   webhookImageGenerationResponseSchema,
   webhookPostProcessingResponseSchema,
   webhookResponseSchema,
+  webhookVideoGenerationResponseSchema,
 } from './schemas'
 
 export const InvalidValidationResultSchema = z.object({
@@ -130,12 +131,25 @@ export type GenerationResultImage = {
   url: string
 }
 
+export type VideoGenerationResultImage = {
+  motionMP4URL: string
+  id: string
+}
+
 export type SuccessfulGenerationResult = {
   success: true
   result: {
     prompt: string
     generationId: string
     images: GenerationResultImage[]
+  }
+}
+
+export type SuccessfulVideoGenerationResult = {
+  success: true
+  result: {
+    generationId: string
+    video: VideoGenerationResultImage
   }
 }
 
@@ -160,6 +174,10 @@ export type WebhookGenerationResultObject = z.infer<
   typeof webhookImageGenerationResponseSchema
 >['data']['object']
 
+export type WebhookVideoGenerationResultObject = z.infer<
+  typeof webhookVideoGenerationResponseSchema
+>['data']['object']
+
 export type SuccessfulVariationResult = {
   success: true
   result: {
@@ -179,6 +197,10 @@ export type VariationResult = SuccessfulVariationResult | FailedResult
 export type WebhookResponse = z.infer<typeof webhookResponseSchema>
 
 export type GenerationResult = SuccessfulGenerationResult | FailedResult
+
+export type VideoGenerationResult =
+  | SuccessfulVideoGenerationResult
+  | FailedResult
 
 export type BasicGenerationResult =
   | { success: true; generationId: string }

@@ -136,35 +136,42 @@ export const uploadInitImageFromUrlResponseSchema = z.union([
 const apiKeySecretSchema = z.object({
     webhookCallbackApiKey: z.string(),
 });
-export const webhookPostProcessingResponseSchema = z.object({
+export const webhookResponseStatusSchema = z.union([
+    z.literal('COMPLETE'),
+    z.literal('FAILED'),
+]);
+const baseInnerSchema = z.object({
+    createdAt: z.coerce.date(),
+    id: z.string(),
+    nsfw: z.boolean(),
+    public: z.boolean(),
+    userId: z.string(),
+    status: webhookResponseStatusSchema,
+    updatedAt: z.coerce.date(),
+    tokenCost: z.number(),
+    apiKey: apiKeySecretSchema,
+    apiDollarCost: z.string(),
+});
+const baseOuterSchema = z.object({
+    timestamp: z.coerce.date(),
+    api_version: z.string(),
+});
+export const webhookPostProcessingResponseSchema = baseOuterSchema.extend({
     type: z.union([
         z.literal('post_processing.complete'),
         z.literal('post_processing.completed'),
     ]),
-    object: z.string(),
-    timestamp: z.coerce.date(),
-    api_version: z.string(),
+    object: z.literal('generated_image_variation_generic'),
     data: z.object({
-        object: z.object({
-            id: z.string(),
-            createdAt: z.coerce.date(),
-            updatedAt: z.coerce.date(),
-            status: z.string(),
+        object: baseInnerSchema.extend({
             url: z.string(),
             transparent: z.boolean(),
             generatedImageId: z.string(),
             transformType: z.literal('UPSCALE'),
             api: z.boolean(),
-            tokenCost: z.number(),
-            apiDollarCost: z.string(),
-            apiKey: apiKeySecretSchema,
         }),
     }),
 });
-export const webhookResponseStatusSchema = z.union([
-    z.literal('COMPLETE'),
-    z.literal('FAILED'),
-]);
 export const webhookImageSchema = z.object({
     createdAt: z.coerce.date(),
     generationId: z.string(),
@@ -179,24 +186,42 @@ export const webhookImageSchema = z.object({
     url: z.string(),
     userId: z.string(),
 });
-export const webhookImageGenerationResponseSchema = z.object({
+export const webhookVideoSchema = z.object({
+    createdAt: z.coerce.date(),
+    generationId: z.string(),
+    id: z.string(),
+    likeCount: z.number(),
+    motionGIFURL: z.string().nullable(),
+    motionMP4URL: z.string(),
+    nsfw: z.boolean(),
+    public: z.boolean(),
+    teamId: z.string().nullable(),
+    trendingScore: z.number(),
+    url: z.string().nullable(),
+    userId: z.string(),
+});
+//ee6c4224-e56f-4bb5-ab02-2aeb1ae77e7b
+export const webhookImageGenerationResponseSchema = baseOuterSchema.extend({
     type: z.literal('image_generation.complete'),
-    object: z.string(),
-    timestamp: z.coerce.date(),
-    api_version: z.string(),
+    object: z.literal('generation'),
     data: z.object({
-        object: z.object({
-            id: z.string(),
-            createdAt: z.coerce.date(),
-            updatedAt: z.coerce.date(),
-            userId: z.string(),
-            public: z.boolean(),
+        object: baseInnerSchema.extend({
             flagged: z.boolean(),
             nsfw: z.boolean(),
-            status: webhookResponseStatusSchema,
-            apiKey: apiKeySecretSchema,
             images: z.array(webhookImageSchema),
             prompt: z.string(),
+        }),
+    }),
+});
+export const webhookVideoGenerationResponseSchema = baseOuterSchema.extend({
+    type: z.literal('video_generation.complete'),
+    object: z.literal('generation'),
+    data: z.object({
+        object: baseInnerSchema.extend({
+            flagged: z.boolean(),
+            nsfw: z.boolean(),
+            images: z.array(webhookVideoSchema),
+            prompt: z.string().nullable(),
         }),
     }),
 });
@@ -250,4 +275,5 @@ export const pollingVariantImageResponseSchema = z.object({
 export const webhookResponseSchema = z.union([
     webhookImageGenerationResponseSchema,
     webhookPostProcessingResponseSchema,
+    webhookVideoGenerationResponseSchema,
 ]);

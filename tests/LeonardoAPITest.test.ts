@@ -99,6 +99,8 @@ describe('LeonardoAPI', () => {
 
       const response = await api.uploadInitImageFromBuffer(buffer, 'mock.png')
 
+      console.log(response)
+
       expect(response.success).toBe(true)
       if (!response.success) {
         throw new Error('Upload failed')
@@ -106,6 +108,6 @@ describe('LeonardoAPI', () => {
       expect(response.url).toBeDefined()
       console.log(response.url)
       // ... additional assertions ...
-    })
+    }, 10000)
   })
 })
